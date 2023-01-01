@@ -13,10 +13,20 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
     final className = element.name;
     element.visitChildren(visitor);
 
-    final abstractMethods = visitor.abstractMethods;
+    final abstractMethods = visitor.methods
+      ..addAll(
+        element.interfaces.fold<List<MethodElement>>(
+          [],
+          (list, element) => list..addAll(element.methods),
+        ),
+      );
     final genClassName = 'Mock$className';
 
-    final classBuffer = StringBuffer();
+    final classBuffer = StringBuffer()
+      ..writeln('import \'${element.source.uri}\';');
+    for (final lib in element.library.importedLibraries) {
+      classBuffer.writeln('import \'${lib.source.uri}\';');
+    }
 
     classBuffer.writeln('class $genClassName implements $className {');
     _addFields(abstractMethods, classBuffer);
@@ -37,31 +47,32 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
       StringBuffer classBuffer) {
     classBuffer.writeln('$className({ ');
     for (final method in abstractMethods) {
-      classBuffer
-          .writeln('this.${_correspondingArgumentName(method.name)},');
+      classBuffer.writeln('this.${_correspondingArgumentName(method.name)},');
     }
     classBuffer.writeln('});\n');
   }
 
   void _addMethodsImplementations(
-      List<MethodElement> abstractMethods, StringBuffer classBuffer) {
-    for (final method in abstractMethods) {
-      final parameters = method.parameters
-          .map((e) => e.getDisplayString(withNullability: true))
-          .join(',');
+      List<MethodElement> methods, StringBuffer classBuffer) {
+    for (final method in methods) {
       final arguments = method.parameters.map((e) => e.name).join(',');
       classBuffer.writeln('@override');
       classBuffer
-          .writeln('${method.returnType} ${method.name}($parameters) =>');
+          .writeln('${method.getDisplayString(withNullability: true)} =>');
       classBuffer.writeln(
-          '${_correspondingArgumentName(method.name)}?.call($arguments) ?? (throw UnimplementedError());\n');
+          '${_correspondingArgumentName(method.name)}?.call($arguments) as dynamic ?? (throw UnimplementedError());\n');
     }
+  }
+
+  String _methodTypeParameters(List<TypeParameterElement> typeParameters) {
+    if (typeParameters.isEmpty) return '';
+    return '<${typeParameters.map((e) => e.displayName).join(',')}>';
   }
 
   String _methodSignature(MethodElement method) {
     final parameters =
         method.parameters.map((e) => e.type.toString()).join(',');
-    return '${method.returnType} Function($parameters)? ${_correspondingArgumentName(method.name)}';
+    return '${method.returnType} Function${_methodTypeParameters(method.typeParameters)}($parameters)? ${_correspondingArgumentName(method.name)}';
   }
 
   String _correspondingArgumentName(String methodName) =>
