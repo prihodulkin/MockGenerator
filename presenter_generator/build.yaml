@@ -8,7 +8,7 @@ builders:
     defaults:
       options:
         build_extensions:
-          '^lib/{{}}.dart': 'lib/generated/{{}}.g.dart'
+          '^lib/{{}}.dart': 'lib/generated/{{}}.mock.dart'
 
   
   

@@ -27,7 +27,6 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
     for (final lib in element.library.importedLibraries) {
       classBuffer.writeln('import \'${lib.source.uri}\';');
     }
-
     classBuffer.writeln('class $genClassName implements $className {');
     _addFields(abstractMethods, classBuffer);
     _addConstructor(genClassName, abstractMethods, classBuffer);
@@ -47,7 +46,7 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
       StringBuffer classBuffer) {
     classBuffer.writeln('$className({ ');
     for (final method in abstractMethods) {
-      classBuffer.writeln('this.${_correspondingArgumentName(method.name)},');
+      classBuffer.writeln('this.${_callbackForMethod(method.name)},');
     }
     classBuffer.writeln('});\n');
   }
@@ -58,9 +57,11 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
       final arguments = method.parameters.map((e) => e.name).join(',');
       classBuffer.writeln('@override');
       classBuffer
-          .writeln('${method.getDisplayString(withNullability: true)} =>');
-      classBuffer.writeln(
-          '${_correspondingArgumentName(method.name)}?.call($arguments) as dynamic ?? (throw UnimplementedError());\n');
+          .writeln('${method.getDisplayString(withNullability: true)} {');
+      final callbackName = _callbackForMethod(method.name);
+      classBuffer.writeln('if ($callbackName!=null) {');
+      classBuffer.writeln('return $callbackName!.call($arguments); } else {');
+      classBuffer.writeln('throw UnimplementedError();}}');
     }
   }
 
@@ -69,12 +70,12 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
     return '<${typeParameters.map((e) => e.displayName).join(',')}>';
   }
 
-  String _methodSignature(MethodElement method) {
+    String _methodSignature(MethodElement method) {
     final parameters =
         method.parameters.map((e) => e.type.toString()).join(',');
-    return '${method.returnType} Function${_methodTypeParameters(method.typeParameters)}($parameters)? ${_correspondingArgumentName(method.name)}';
+    return '${method.returnType} Function${_methodTypeParameters(method.typeParameters)}($parameters)? ${_callbackForMethod(method.name)}';
   }
 
-  String _correspondingArgumentName(String methodName) =>
+  String _callbackForMethod(String methodName) =>
       'on${methodName[0].toUpperCase()}${methodName.substring(1)}';
 }

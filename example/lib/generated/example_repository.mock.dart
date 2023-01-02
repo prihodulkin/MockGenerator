@@ -19,14 +19,29 @@ class MockIRepository implements IRepository {
   });
 
   @override
-  Future<void> saveData({required String param}) =>
-      onSaveData?.call(param) as dynamic ?? (throw UnimplementedError());
+  Future<void> saveData({required String param}) {
+    if (onSaveData != null) {
+      return onSaveData!.call(param);
+    } else {
+      throw UnimplementedError();
+    }
+  }
 
   @override
-  Future<List<String>> loadData() =>
-      onLoadData?.call() as dynamic ?? (throw UnimplementedError());
+  Future<List<String>> loadData() {
+    if (onLoadData != null) {
+      return onLoadData!.call();
+    } else {
+      throw UnimplementedError();
+    }
+  }
 
   @override
-  void someAction() =>
-      onSomeAction?.call() as dynamic ?? (throw UnimplementedError());
+  void someAction() {
+    if (onSomeAction != null) {
+      return onSomeAction!.call();
+    } else {
+      throw UnimplementedError();
+    }
+  }
 }

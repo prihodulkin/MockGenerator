@@ -315,7 +315,7 @@ packages:
     source: path
     version: "1.0.0+1"
   presenter_generator:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       path: "../presenter_generator"
       relative: true
