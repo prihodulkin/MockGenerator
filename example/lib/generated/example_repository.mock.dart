@@ -9,9 +9,9 @@ import 'package:presenter/testable.dart';
 import 'dart:core';
 
 class MockIRepository implements IRepository {
-  final Future<void> Function(String)? onSaveData;
-  final Future<List<String>> Function()? onLoadData;
-  final void Function()? onSomeAction;
+  Future<void> Function(String param, String param2)? onSaveData;
+  Future<List<String>> Function()? onLoadData;
+  void Function()? onSomeAction;
   MockIRepository({
     this.onSaveData,
     this.onLoadData,
@@ -19,9 +19,9 @@ class MockIRepository implements IRepository {
   });
 
   @override
-  Future<void> saveData({required String param}) {
+  Future<void> saveData({required String param, required String param2}) {
     if (onSaveData != null) {
-      return onSaveData!.call(param);
+      return onSaveData!.call(param, param2);
     } else {
       throw UnimplementedError();
     }

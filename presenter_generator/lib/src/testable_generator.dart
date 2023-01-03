@@ -38,7 +38,7 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
   void _addFields(
       List<MethodElement> abstractMethods, StringBuffer classBuffer) {
     for (final method in abstractMethods) {
-      classBuffer.writeln('final ${_methodSignature(method)};');
+      classBuffer.writeln('${_methodSignature(method)};');
     }
   }
 
@@ -70,12 +70,12 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
     return '<${typeParameters.map((e) => e.displayName).join(',')}>';
   }
 
-    String _methodSignature(MethodElement method) {
-    final parameters =
-        method.parameters.map((e) => e.type.toString()).join(',');
+  String _methodSignature(MethodElement method) {
+    final parameters = method.parameters.map((e) => '${e.type} ${e.name}').join(',');
     return '${method.returnType} Function${_methodTypeParameters(method.typeParameters)}($parameters)? ${_callbackForMethod(method.name)}';
   }
 
   String _callbackForMethod(String methodName) =>
       'on${methodName[0].toUpperCase()}${methodName.substring(1)}';
+
 }
