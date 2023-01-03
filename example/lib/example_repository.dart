@@ -4,7 +4,7 @@ import 'package:presenter/testable.dart';
 abstract class IRepository with MixinA implements B {
   Future<void> saveData({
     required String param,
-    required String param2,
+    required String param2, 
   });
 
   Future<List<String>> loadData();
@@ -20,7 +20,7 @@ abstract class B implements A {
   void b();
 }
 
-abstract class A {
+abstract class A with MixinA {
   void a();
 
   String get wtf;

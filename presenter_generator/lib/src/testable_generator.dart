@@ -15,12 +15,7 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
     final className = element.name;
     final methods = List<MethodElement>.from(element.methods);
     final accessors = List<PropertyAccessorElement>.from(element.accessors);
-    _addMethodsAndAccessorsFromInterfaces(
-      methods,
-      accessors,
-      element.interfaces,
-    );
-    _addMethodsAndAccessorsFromMixins(methods, accessors, element.mixins);
+    _addAllMethodsAndAccessorsFromSupertypes(methods, accessors, element);
     final classBuffer = StringBuffer()
       ..writeln('import \'${element.source.uri}\';');
     for (final lib in element.library.importedLibraries) {
@@ -36,40 +31,17 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
     return classBuffer.toString();
   }
 
-  void _addMethodsAndAccessorsFromInterfaces(
+  void _addAllMethodsAndAccessorsFromSupertypes(
     List<MethodElement> methods,
     List<PropertyAccessorElement> accessors,
-    List<InterfaceType> interfaces,
+    ClassElement element,
   ) {
-    for (final interface in interfaces) {
+    for (final interface in element.allSupertypes) {
+      if (interface.getDisplayString(withNullability: false) == 'Object') {
+        continue;
+      }
       methods.addAll(interface.methods);
       accessors.addAll(interface.accessors);
-      if (interface.interfaces.isNotEmpty) {
-        _addMethodsAndAccessorsFromInterfaces(
-            methods, accessors, interface.interfaces);
-      }
-      if (interface.mixins.isNotEmpty) {
-        _addMethodsAndAccessorsFromMixins(
-          methods,
-          accessors,
-          interface.mixins,
-        );
-      }
-    }
-  }
-
-  void _addMethodsAndAccessorsFromMixins(
-    List<MethodElement> methods,
-    List<PropertyAccessorElement> accessors,
-    List<InterfaceType> mixins,
-  ) {
-    for (final mixin in mixins) {
-      methods.addAll(mixin.methods);
-      accessors.addAll(mixin.accessors);
-      if (mixin.mixins.isNotEmpty) {
-        _addMethodsAndAccessorsFromInterfaces(
-            methods, accessors, mixin.interfaces);
-      }
     }
   }
 
