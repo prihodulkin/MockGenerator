@@ -12,10 +12,14 @@ class MockIRepository implements IRepository {
   Future<void> Function(String param, String param2)? onSaveData;
   Future<List<String>> Function()? onLoadData;
   void Function()? onSomeAction;
+  String Function()? onNameGet;
+  void Function(String value)? onNameSet;
   MockIRepository({
     this.onSaveData,
     this.onLoadData,
     this.onSomeAction,
+    this.onNameGet,
+    this.onNameSet,
   });
 
   @override
@@ -40,6 +44,24 @@ class MockIRepository implements IRepository {
   void someAction() {
     if (onSomeAction != null) {
       return onSomeAction!.call();
+    } else {
+      throw UnimplementedError();
+    }
+  }
+
+  @override
+  String get name {
+    if (onNameGet != null) {
+      return onNameGet!.call();
+    } else {
+      throw UnimplementedError();
+    }
+  }
+
+  @override
+  set name(String value) {
+    if (onNameSet != null) {
+      return onNameSet!.call(value);
     } else {
       throw UnimplementedError();
     }

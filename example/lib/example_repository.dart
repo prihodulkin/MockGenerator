@@ -6,5 +6,9 @@ abstract class IRepository {
 
   Future<List<String>> loadData();
 
+  String get name;
+
+  set name(String name);
+
   void someAction();
 }
