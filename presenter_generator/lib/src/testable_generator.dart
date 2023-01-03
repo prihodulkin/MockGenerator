@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:presenter/testable.dart';
 import 'package:source_gen/source_gen.dart';
@@ -6,38 +7,73 @@ import 'package:source_gen/source_gen.dart';
 class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
   @override
   generateForAnnotatedElement(
-      Element element, ConstantReader annotation, BuildStep buildStep) {
+    Element element,
+    ConstantReader annotation,
+    BuildStep buildStep,
+  ) {
     if (element is! ClassElement) return;
     final className = element.name;
-    final methods = List<MethodElement>.from(element.methods)
-      ..addAll(
-        element.interfaces.fold<List<MethodElement>>(
-          [],
-          (list, element) => list..addAll(element.methods),
-        ),
-      );
-    final accessors = List<PropertyAccessorElement>.from(element.accessors)..addAll(
-        element.interfaces.fold<List<PropertyAccessorElement>>(
-          [],
-          (list, element) => list..addAll(element.accessors),
-        ),
-      );;
-    final genClassName = 'Mock$className';
+    final methods = List<MethodElement>.from(element.methods);
+    final accessors = List<PropertyAccessorElement>.from(element.accessors);
+    _addMethodsAndAccessorsFromInterfaces(
+      methods,
+      accessors,
+      element.interfaces,
+    );
+    _addMethodsAndAccessorsFromMixins(methods, accessors, element.mixins);
     final classBuffer = StringBuffer()
       ..writeln('import \'${element.source.uri}\';');
     for (final lib in element.library.importedLibraries) {
       classBuffer.writeln('import \'${lib.source.uri}\';');
     }
+    final genClassName = 'Mock$className';
     classBuffer.writeln('class $genClassName implements $className {');
-    _addFields(methods, accessors, classBuffer);
-    _addConstructor(genClassName, methods, accessors, classBuffer);
-    _addMethodsImplementations(methods, classBuffer);
-    _addAccessorsImplementations(accessors, classBuffer);
+    _writeFields(methods, accessors, classBuffer);
+    _writeConstructor(genClassName, methods, accessors, classBuffer);
+    _writeMethodsImplementations(methods, classBuffer);
+    _writeAccessorsImplementations(accessors, classBuffer);
     classBuffer.writeln('}');
     return classBuffer.toString();
   }
 
-  void _addFields(
+  void _addMethodsAndAccessorsFromInterfaces(
+    List<MethodElement> methods,
+    List<PropertyAccessorElement> accessors,
+    List<InterfaceType> interfaces,
+  ) {
+    for (final interface in interfaces) {
+      methods.addAll(interface.methods);
+      accessors.addAll(interface.accessors);
+      if (interface.interfaces.isNotEmpty) {
+        _addMethodsAndAccessorsFromInterfaces(
+            methods, accessors, interface.interfaces);
+      }
+      if (interface.mixins.isNotEmpty) {
+        _addMethodsAndAccessorsFromMixins(
+          methods,
+          accessors,
+          interface.mixins,
+        );
+      }
+    }
+  }
+
+  void _addMethodsAndAccessorsFromMixins(
+    List<MethodElement> methods,
+    List<PropertyAccessorElement> accessors,
+    List<InterfaceType> mixins,
+  ) {
+    for (final mixin in mixins) {
+      methods.addAll(mixin.methods);
+      accessors.addAll(mixin.accessors);
+      if (mixin.mixins.isNotEmpty) {
+        _addMethodsAndAccessorsFromInterfaces(
+            methods, accessors, mixin.interfaces);
+      }
+    }
+  }
+
+  void _writeFields(
     List<MethodElement> methods,
     List<PropertyAccessorElement> accessors,
     StringBuffer classBuffer,
@@ -54,7 +90,7 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
     }
   }
 
-  void _addConstructor(
+  void _writeConstructor(
     String className,
     List<MethodElement> abstractMethods,
     List<PropertyAccessorElement> accessors,
@@ -71,7 +107,7 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
     classBuffer.writeln('});\n');
   }
 
-  void _addMethodsImplementations(
+  void _writeMethodsImplementations(
       List<MethodElement> methods, StringBuffer classBuffer) {
     for (final method in methods) {
       final arguments = method.parameters.map((e) => e.name).join(',');
@@ -85,19 +121,19 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
     }
   }
 
-  void _addAccessorsImplementations(
+  void _writeAccessorsImplementations(
       List<PropertyAccessorElement> accessors, StringBuffer classBuffer) {
     for (final accessor in accessors) {
       classBuffer.writeln('@override');
       if (accessor.isGetter) {
-        _addGetterImplementation(accessor, classBuffer);
+        _writeGetterImplementation(accessor, classBuffer);
       } else {
-        _addSetterImplementation(accessor, classBuffer);
+        _writeSetterImplementation(accessor, classBuffer);
       }
     }
   }
 
-  void _addGetterImplementation(
+  void _writeGetterImplementation(
       PropertyAccessorElement getter, StringBuffer classBuffer) {
     final name = '${_fieldName(getter.name)}Get';
     classBuffer.writeln(getter.getDisplayString(withNullability: true));
@@ -106,7 +142,7 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
     classBuffer.writeln('throw UnimplementedError();}}');
   }
 
-  void _addSetterImplementation(
+  void _writeSetterImplementation(
       PropertyAccessorElement setter, StringBuffer classBuffer) {
     final parameter = setter.parameters.first;
     classBuffer.writeln('set ${setter.variable.name}(${parameter.type} value)');

@@ -1,8 +1,11 @@
 import 'package:presenter/testable.dart';
 
 @testable
-abstract class IRepository {
-  Future<void> saveData({required String param, required String param2});
+abstract class IRepository with MixinA implements B {
+  Future<void> saveData({
+    required String param,
+    required String param2,
+  });
 
   Future<List<String>> loadData();
 
@@ -11,4 +14,18 @@ abstract class IRepository {
   set name(String name);
 
   void someAction();
+}
+
+abstract class B implements A {
+  void b();
+}
+
+abstract class A {
+  void a();
+
+  String get wtf;
+}
+
+mixin MixinA {
+  void mixinA();
 }
