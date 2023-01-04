@@ -1,5 +1,4 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:presenter/testable.dart';
 import 'package:source_gen/source_gen.dart';
@@ -19,7 +18,9 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
     final classBuffer = StringBuffer()
       ..writeln('import \'${element.source.uri}\';');
     for (final lib in element.library.importedLibraries) {
-      classBuffer.writeln('import \'${lib.source.uri}\';');
+      if (lib.source.uri.toString() != 'package:presenter/testable.dart') {
+        classBuffer.writeln('import \'${lib.source.uri}\';');
+      }
     }
     final genClassName = 'Mock$className';
     classBuffer.writeln('class $genClassName implements $className {');
@@ -70,11 +71,11 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
   ) {
     classBuffer.writeln('$className({ ');
     for (final method in abstractMethods) {
-      classBuffer.writeln('this.${_fieldName(method.name)},');
+      classBuffer.writeln('this.${_fieldForMethodName(method.name)},');
     }
     for (final accessor in accessors) {
       classBuffer.writeln(
-          'this.${_fieldName(accessor.displayName)}${accessor.isGetter ? 'Get' : 'Set'},');
+          'this.${accessor.isGetter ? _fieldForGetterName(accessor.displayName) : _fieldForSetterName(accessor.displayName)},');
     }
     classBuffer.writeln('});\n');
   }
@@ -85,7 +86,8 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
       classBuffer.writeln('@override');
       classBuffer.writeln(method.getDisplayString(withNullability: true));
       final arguments = method.parameters.map((e) => e.name).join(',');
-      _writeMemberBody(_fieldName(method.name), arguments, classBuffer);
+      _writeMemberBody(
+          _fieldForMethodName(method.name), arguments, classBuffer);
     }
   }
 
@@ -104,14 +106,15 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
   void _writeGetterImplementation(
       PropertyAccessorElement getter, StringBuffer classBuffer) {
     classBuffer.writeln(getter.getDisplayString(withNullability: true));
-    _writeMemberBody('${_fieldName(getter.name)}Get', '', classBuffer);
+    _writeMemberBody(_fieldForGetterName(getter.displayName), '', classBuffer);
   }
 
   void _writeSetterImplementation(
       PropertyAccessorElement setter, StringBuffer classBuffer) {
     final parameter = setter.parameters.first;
     classBuffer.writeln('set ${setter.variable.name}(${parameter.type} value)');
-    _writeMemberBody('${_fieldName(setter.displayName)}Set', 'value', classBuffer);
+    _writeMemberBody(
+        _fieldForSetterName(setter.displayName), 'value', classBuffer);
   }
 
   void _writeMemberBody(
@@ -129,18 +132,21 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
   String _fieldForMethod(MethodElement method) {
     final parameters =
         method.parameters.map((e) => '${e.type} ${e.name}').join(',');
-    return '${method.returnType} Function${_methodTypeParameters(method.typeParameters)}($parameters)? ${_fieldName(method.name)};';
+    return '${method.returnType} Function${_methodTypeParameters(method.typeParameters)}($parameters)? ${_fieldForMethodName(method.name)};';
   }
 
-  String _fieldForGetter(PropertyAccessorElement getter) {
-    return '${getter.returnType} Function()? ${_fieldName(getter.name)}Get;';
-  }
+  String _fieldForGetter(PropertyAccessorElement getter) =>
+      '${getter.returnType} Function()? ${_fieldForGetterName(getter.name)};';
 
-  String _fieldForSetter(PropertyAccessorElement setter) {
-    return 'void Function(${setter.type.parameters.first.type} value)? ${_fieldName(setter.displayName)}Set;';
-  }
+  String _fieldForSetter(PropertyAccessorElement setter) =>
+      'void Function(${setter.type.parameters.first.type} value)? ${_fieldForSetterName(setter.displayName)};';
 
-  String _fieldName(String methodName) =>
+  String _fieldForMethodName(String methodName) =>
       'on${methodName[0].toUpperCase()}${methodName.substring(1)}';
 
+  String _fieldForGetterName(String getterName) =>
+      'on${getterName[0].toUpperCase()}${getterName.substring(1)}Get';
+
+  String _fieldForSetterName(String setterName) =>
+      'on${setterName[0].toUpperCase()}${setterName.substring(1)}Set';
 }

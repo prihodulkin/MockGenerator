@@ -6,7 +6,6 @@
 
 import 'package:example/testable_dio.dart';
 import 'package:dio/dio.dart';
-import 'package:presenter/testable.dart';
 import 'dart:core';
 
 class MockTestableDio implements TestableDio {

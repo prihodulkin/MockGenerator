@@ -5,7 +5,6 @@
 // **************************************************************************
 
 import 'package:example/example_repository.dart';
-import 'package:presenter/testable.dart';
 import 'dart:core';
 
 class MockIRepository implements IRepository {

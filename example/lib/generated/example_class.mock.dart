@@ -5,7 +5,6 @@
 // **************************************************************************
 
 import 'package:example/example_class.dart';
-import 'package:presenter/testable.dart';
 import 'dart:core';
 
 class MockExampleClass implements ExampleClass {
