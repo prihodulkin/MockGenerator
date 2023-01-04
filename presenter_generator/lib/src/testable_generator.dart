@@ -82,14 +82,10 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
   void _writeMethodsImplementations(
       List<MethodElement> methods, StringBuffer classBuffer) {
     for (final method in methods) {
-      final arguments = method.parameters.map((e) => e.name).join(',');
       classBuffer.writeln('@override');
-      classBuffer
-          .writeln('${method.getDisplayString(withNullability: true)} {');
-      final callbackName = _fieldName(method.name);
-      classBuffer.writeln('if ($callbackName!=null) {');
-      classBuffer.writeln('return $callbackName!.call($arguments); } else {');
-      classBuffer.writeln('throw UnimplementedError();}}');
+      classBuffer.writeln(method.getDisplayString(withNullability: true));
+      final arguments = method.parameters.map((e) => e.name).join(',');
+      _writeMemberBody(_fieldName(method.name), arguments, classBuffer);
     }
   }
 
@@ -107,20 +103,21 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
 
   void _writeGetterImplementation(
       PropertyAccessorElement getter, StringBuffer classBuffer) {
-    final name = '${_fieldName(getter.name)}Get';
     classBuffer.writeln(getter.getDisplayString(withNullability: true));
-    classBuffer.writeln('{ if($name!=null){');
-    classBuffer.writeln('return $name!.call(); } else{');
-    classBuffer.writeln('throw UnimplementedError();}}');
+    _writeMemberBody('${_fieldName(getter.name)}Get', '', classBuffer);
   }
 
   void _writeSetterImplementation(
       PropertyAccessorElement setter, StringBuffer classBuffer) {
     final parameter = setter.parameters.first;
     classBuffer.writeln('set ${setter.variable.name}(${parameter.type} value)');
-    final name = '${_fieldName(setter.displayName)}Set';
-    classBuffer.writeln('{ if($name!=null){');
-    classBuffer.writeln('return $name!.call(value); } else{');
+    _writeMemberBody('${_fieldName(setter.displayName)}Set', 'value', classBuffer);
+  }
+
+  void _writeMemberBody(
+      String fieldName, String arguments, StringBuffer classBuffer) {
+    classBuffer.writeln('{ if($fieldName!=null){');
+    classBuffer.writeln('return $fieldName!.call($arguments); } else{');
     classBuffer.writeln('throw UnimplementedError();}}');
   }
 
@@ -145,4 +142,5 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
 
   String _fieldName(String methodName) =>
       'on${methodName[0].toUpperCase()}${methodName.substring(1)}';
+
 }
