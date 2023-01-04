@@ -97,6 +97,7 @@ class MockTestableDio implements TestableDio {
       String lengthHeader,
       dynamic data,
       Options? options)? onDownload;
+  Future<Response<dynamic>>? downloadReturnValue;
   Future<Response<dynamic>> Function(
       Uri uri,
       dynamic savePath,
@@ -106,6 +107,7 @@ class MockTestableDio implements TestableDio {
       String lengthHeader,
       dynamic data,
       Options? options)? onDownloadUri;
+  Future<Response<dynamic>>? downloadUriReturnValue;
   Future<Response<T>> Function<T>(
       String path,
       dynamic data,
@@ -122,13 +124,18 @@ class MockTestableDio implements TestableDio {
       void Function(int, int)? onSendProgress,
       void Function(int, int)? onReceiveProgress)? onRequestUri;
   Future<Response<T>> Function<T>(RequestOptions requestOptions)? onFetch;
+  BaseOptions? getOptionsReturnValue;
   BaseOptions Function()? onOptionsGet;
   void Function(BaseOptions value)? onOptionsSet;
+  HttpClientAdapter? getHttpClientAdapterReturnValue;
   HttpClientAdapter Function()? onHttpClientAdapterGet;
   void Function(HttpClientAdapter value)? onHttpClientAdapterSet;
+  Transformer? getTransformerReturnValue;
   Transformer Function()? onTransformerGet;
   void Function(Transformer value)? onTransformerSet;
+  Interceptors? getInterceptorsReturnValue;
   Interceptors Function()? onInterceptorsGet;
+
   MockTestableDio({
     this.onClose,
     this.onGet,
@@ -147,17 +154,23 @@ class MockTestableDio implements TestableDio {
     this.onUnlock,
     this.onClear,
     this.onDownload,
+    this.downloadReturnValue,
     this.onDownloadUri,
+    this.downloadUriReturnValue,
     this.onRequest,
     this.onRequestUri,
     this.onFetch,
     this.onOptionsGet,
+    this.getOptionsReturnValue,
     this.onOptionsSet,
     this.onHttpClientAdapterGet,
+    this.getHttpClientAdapterReturnValue,
     this.onHttpClientAdapterSet,
     this.onTransformerGet,
+    this.getTransformerReturnValue,
     this.onTransformerSet,
     this.onInterceptorsGet,
+    this.getInterceptorsReturnValue,
   });
 
   @override
@@ -381,6 +394,8 @@ class MockTestableDio implements TestableDio {
           lengthHeader,
           data,
           options);
+    } else if (downloadReturnValue != null) {
+      return downloadReturnValue!;
     } else {
       throw UnimplementedError();
     }
@@ -397,6 +412,8 @@ class MockTestableDio implements TestableDio {
     if (onDownloadUri != null) {
       return onDownloadUri!.call(uri, savePath, onReceiveProgress, cancelToken,
           deleteOnError, lengthHeader, data, options);
+    } else if (downloadUriReturnValue != null) {
+      return downloadUriReturnValue!;
     } else {
       throw UnimplementedError();
     }
@@ -446,6 +463,8 @@ class MockTestableDio implements TestableDio {
   BaseOptions get options {
     if (onOptionsGet != null) {
       return onOptionsGet!.call();
+    } else if (getOptionsReturnValue != null) {
+      return getOptionsReturnValue!;
     } else {
       throw UnimplementedError();
     }
@@ -464,6 +483,8 @@ class MockTestableDio implements TestableDio {
   HttpClientAdapter get httpClientAdapter {
     if (onHttpClientAdapterGet != null) {
       return onHttpClientAdapterGet!.call();
+    } else if (getHttpClientAdapterReturnValue != null) {
+      return getHttpClientAdapterReturnValue!;
     } else {
       throw UnimplementedError();
     }
@@ -482,6 +503,8 @@ class MockTestableDio implements TestableDio {
   Transformer get transformer {
     if (onTransformerGet != null) {
       return onTransformerGet!.call();
+    } else if (getTransformerReturnValue != null) {
+      return getTransformerReturnValue!;
     } else {
       throw UnimplementedError();
     }
@@ -500,6 +523,8 @@ class MockTestableDio implements TestableDio {
   Interceptors get interceptors {
     if (onInterceptorsGet != null) {
       return onInterceptorsGet!.call();
+    } else if (getInterceptorsReturnValue != null) {
+      return getInterceptorsReturnValue!;
     } else {
       throw UnimplementedError();
     }

@@ -9,30 +9,41 @@ import 'dart:core';
 
 class MockIRepository implements IRepository {
   Future<void> Function(String param, String param2)? onSaveData;
+  Future<void>? saveDataReturnValue;
   Future<List<String>> Function()? onLoadData;
+  Future<List<String>>? loadDataReturnValue;
   void Function()? onSomeAction;
   void Function()? onB;
   void Function()? onA;
   void Function()? onMixinA;
+  String? getNameReturnValue;
   String Function()? onNameGet;
   void Function(String value)? onNameSet;
+  String? getWtfReturnValue;
   String Function()? onWtfGet;
+
   MockIRepository({
     this.onSaveData,
+    this.saveDataReturnValue,
     this.onLoadData,
+    this.loadDataReturnValue,
     this.onSomeAction,
     this.onB,
     this.onA,
     this.onMixinA,
     this.onNameGet,
+    this.getNameReturnValue,
     this.onNameSet,
     this.onWtfGet,
+    this.getWtfReturnValue,
   });
 
   @override
   Future<void> saveData({required String param, required String param2}) {
     if (onSaveData != null) {
       return onSaveData!.call(param, param2);
+    } else if (saveDataReturnValue != null) {
+      return saveDataReturnValue!;
     } else {
       throw UnimplementedError();
     }
@@ -42,6 +53,8 @@ class MockIRepository implements IRepository {
   Future<List<String>> loadData() {
     if (onLoadData != null) {
       return onLoadData!.call();
+    } else if (loadDataReturnValue != null) {
+      return loadDataReturnValue!;
     } else {
       throw UnimplementedError();
     }
@@ -87,6 +100,8 @@ class MockIRepository implements IRepository {
   String get name {
     if (onNameGet != null) {
       return onNameGet!.call();
+    } else if (getNameReturnValue != null) {
+      return getNameReturnValue!;
     } else {
       throw UnimplementedError();
     }
@@ -105,6 +120,8 @@ class MockIRepository implements IRepository {
   String get wtf {
     if (onWtfGet != null) {
       return onWtfGet!.call();
+    } else if (getWtfReturnValue != null) {
+      return getWtfReturnValue!;
     } else {
       throw UnimplementedError();
     }
