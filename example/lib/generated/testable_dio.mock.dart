@@ -10,7 +10,8 @@ import 'package:presenter/testable.dart';
 import 'dart:core';
 
 class MockTestableDio implements TestableDio {
-  MockTestableDioClassInfo info = MockTestableDioClassInfo();
+  final dynamic _info = MockTestableDioClassInfo();
+  MockTestableDioClassInfo get info => _info as MockTestableDioClassInfo;
   void Function(bool force)? onClose;
   Future<Response<T>> Function<T>(
       String path,
@@ -177,6 +178,7 @@ class MockTestableDio implements TestableDio {
 
   @override
   void close({bool force = false}) {
+    _info.close(force: force);
     if (onClose != null) {
       return onClose!.call(force);
     } else {
@@ -190,6 +192,11 @@ class MockTestableDio implements TestableDio {
       Options? options,
       CancelToken? cancelToken,
       void Function(int, int)? onReceiveProgress}) {
+    _info.get<T>(path,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onReceiveProgress: onReceiveProgress);
     if (onGet != null) {
       return onGet!
           .call(path, queryParameters, options, cancelToken, onReceiveProgress);
@@ -203,6 +210,10 @@ class MockTestableDio implements TestableDio {
       {Options? options,
       CancelToken? cancelToken,
       void Function(int, int)? onReceiveProgress}) {
+    _info.getUri<T>(uri,
+        options: options,
+        cancelToken: cancelToken,
+        onReceiveProgress: onReceiveProgress);
     if (onGetUri != null) {
       return onGetUri!.call(uri, options, cancelToken, onReceiveProgress);
     } else {
@@ -218,6 +229,13 @@ class MockTestableDio implements TestableDio {
       CancelToken? cancelToken,
       void Function(int, int)? onSendProgress,
       void Function(int, int)? onReceiveProgress}) {
+    _info.post<T>(path,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress);
     if (onPost != null) {
       return onPost!.call(path, data, queryParameters, options, cancelToken,
           onSendProgress, onReceiveProgress);
@@ -233,6 +251,12 @@ class MockTestableDio implements TestableDio {
       CancelToken? cancelToken,
       void Function(int, int)? onSendProgress,
       void Function(int, int)? onReceiveProgress}) {
+    _info.postUri<T>(uri,
+        data: data,
+        options: options,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress);
     if (onPostUri != null) {
       return onPostUri!.call(
           uri, data, options, cancelToken, onSendProgress, onReceiveProgress);
@@ -249,6 +273,13 @@ class MockTestableDio implements TestableDio {
       CancelToken? cancelToken,
       void Function(int, int)? onSendProgress,
       void Function(int, int)? onReceiveProgress}) {
+    _info.put<T>(path,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress);
     if (onPut != null) {
       return onPut!.call(path, data, queryParameters, options, cancelToken,
           onSendProgress, onReceiveProgress);
@@ -264,6 +295,12 @@ class MockTestableDio implements TestableDio {
       CancelToken? cancelToken,
       void Function(int, int)? onSendProgress,
       void Function(int, int)? onReceiveProgress}) {
+    _info.putUri<T>(uri,
+        data: data,
+        options: options,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress);
     if (onPutUri != null) {
       return onPutUri!.call(
           uri, data, options, cancelToken, onSendProgress, onReceiveProgress);
@@ -278,6 +315,11 @@ class MockTestableDio implements TestableDio {
       Map<String, dynamic>? queryParameters,
       Options? options,
       CancelToken? cancelToken}) {
+    _info.head<T>(path,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken);
     if (onHead != null) {
       return onHead!.call(path, data, queryParameters, options, cancelToken);
     } else {
@@ -288,6 +330,8 @@ class MockTestableDio implements TestableDio {
   @override
   Future<Response<T>> headUri<T>(Uri uri,
       {dynamic data, Options? options, CancelToken? cancelToken}) {
+    _info.headUri<T>(uri,
+        data: data, options: options, cancelToken: cancelToken);
     if (onHeadUri != null) {
       return onHeadUri!.call(uri, data, options, cancelToken);
     } else {
@@ -301,6 +345,11 @@ class MockTestableDio implements TestableDio {
       Map<String, dynamic>? queryParameters,
       Options? options,
       CancelToken? cancelToken}) {
+    _info.delete<T>(path,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken);
     if (onDelete != null) {
       return onDelete!.call(path, data, queryParameters, options, cancelToken);
     } else {
@@ -311,6 +360,8 @@ class MockTestableDio implements TestableDio {
   @override
   Future<Response<T>> deleteUri<T>(Uri uri,
       {dynamic data, Options? options, CancelToken? cancelToken}) {
+    _info.deleteUri<T>(uri,
+        data: data, options: options, cancelToken: cancelToken);
     if (onDeleteUri != null) {
       return onDeleteUri!.call(uri, data, options, cancelToken);
     } else {
@@ -326,6 +377,13 @@ class MockTestableDio implements TestableDio {
       CancelToken? cancelToken,
       void Function(int, int)? onSendProgress,
       void Function(int, int)? onReceiveProgress}) {
+    _info.patch<T>(path,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress);
     if (onPatch != null) {
       return onPatch!.call(path, data, queryParameters, options, cancelToken,
           onSendProgress, onReceiveProgress);
@@ -341,6 +399,12 @@ class MockTestableDio implements TestableDio {
       CancelToken? cancelToken,
       void Function(int, int)? onSendProgress,
       void Function(int, int)? onReceiveProgress}) {
+    _info.patchUri<T>(uri,
+        data: data,
+        options: options,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress);
     if (onPatchUri != null) {
       return onPatchUri!.call(
           uri, data, options, cancelToken, onSendProgress, onReceiveProgress);
@@ -351,6 +415,7 @@ class MockTestableDio implements TestableDio {
 
   @override
   void lock() {
+    _info.lock();
     if (onLock != null) {
       return onLock!.call();
     } else {
@@ -360,6 +425,7 @@ class MockTestableDio implements TestableDio {
 
   @override
   void unlock() {
+    _info.unlock();
     if (onUnlock != null) {
       return onUnlock!.call();
     } else {
@@ -369,6 +435,7 @@ class MockTestableDio implements TestableDio {
 
   @override
   void clear() {
+    _info.clear();
     if (onClear != null) {
       return onClear!.call();
     } else {
@@ -385,6 +452,14 @@ class MockTestableDio implements TestableDio {
       String lengthHeader = Headers.contentLengthHeader,
       dynamic data,
       Options? options}) {
+    _info.download(urlPath, savePath,
+        onReceiveProgress: onReceiveProgress,
+        queryParameters: queryParameters,
+        cancelToken: cancelToken,
+        deleteOnError: deleteOnError,
+        lengthHeader: lengthHeader,
+        data: data,
+        options: options);
     if (onDownload != null) {
       return onDownload!.call(
           urlPath,
@@ -411,6 +486,13 @@ class MockTestableDio implements TestableDio {
       String lengthHeader = Headers.contentLengthHeader,
       dynamic data,
       Options? options}) {
+    _info.downloadUri(uri, savePath,
+        onReceiveProgress: onReceiveProgress,
+        cancelToken: cancelToken,
+        deleteOnError: deleteOnError,
+        lengthHeader: lengthHeader,
+        data: data,
+        options: options);
     if (onDownloadUri != null) {
       return onDownloadUri!.call(uri, savePath, onReceiveProgress, cancelToken,
           deleteOnError, lengthHeader, data, options);
@@ -429,6 +511,13 @@ class MockTestableDio implements TestableDio {
       Options? options,
       void Function(int, int)? onSendProgress,
       void Function(int, int)? onReceiveProgress}) {
+    _info.request<T>(path,
+        data: data,
+        queryParameters: queryParameters,
+        cancelToken: cancelToken,
+        options: options,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress);
     if (onRequest != null) {
       return onRequest!.call(path, data, queryParameters, cancelToken, options,
           onSendProgress, onReceiveProgress);
@@ -444,6 +533,12 @@ class MockTestableDio implements TestableDio {
       Options? options,
       void Function(int, int)? onSendProgress,
       void Function(int, int)? onReceiveProgress}) {
+    _info.requestUri<T>(uri,
+        data: data,
+        cancelToken: cancelToken,
+        options: options,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress);
     if (onRequestUri != null) {
       return onRequestUri!.call(
           uri, data, cancelToken, options, onSendProgress, onReceiveProgress);
@@ -454,6 +549,7 @@ class MockTestableDio implements TestableDio {
 
   @override
   Future<Response<T>> fetch<T>(RequestOptions requestOptions) {
+    _info.fetch<T>(requestOptions);
     if (onFetch != null) {
       return onFetch!.call(requestOptions);
     } else {
@@ -463,6 +559,7 @@ class MockTestableDio implements TestableDio {
 
   @override
   BaseOptions get options {
+    _info.options;
     if (onOptionsGet != null) {
       return onOptionsGet!.call();
     } else if (getOptionsReturnValue != null) {
@@ -474,6 +571,7 @@ class MockTestableDio implements TestableDio {
 
   @override
   set options(BaseOptions value) {
+    _info.options = value;
     if (onOptionsSet != null) {
       return onOptionsSet!.call(value);
     } else {
@@ -483,6 +581,7 @@ class MockTestableDio implements TestableDio {
 
   @override
   HttpClientAdapter get httpClientAdapter {
+    _info.httpClientAdapter;
     if (onHttpClientAdapterGet != null) {
       return onHttpClientAdapterGet!.call();
     } else if (getHttpClientAdapterReturnValue != null) {
@@ -494,6 +593,7 @@ class MockTestableDio implements TestableDio {
 
   @override
   set httpClientAdapter(HttpClientAdapter value) {
+    _info.httpClientAdapter = value;
     if (onHttpClientAdapterSet != null) {
       return onHttpClientAdapterSet!.call(value);
     } else {
@@ -503,6 +603,7 @@ class MockTestableDio implements TestableDio {
 
   @override
   Transformer get transformer {
+    _info.transformer;
     if (onTransformerGet != null) {
       return onTransformerGet!.call();
     } else if (getTransformerReturnValue != null) {
@@ -514,6 +615,7 @@ class MockTestableDio implements TestableDio {
 
   @override
   set transformer(Transformer value) {
+    _info.transformer = value;
     if (onTransformerSet != null) {
       return onTransformerSet!.call(value);
     } else {
@@ -523,6 +625,7 @@ class MockTestableDio implements TestableDio {
 
   @override
   Interceptors get interceptors {
+    _info.interceptors;
     if (onInterceptorsGet != null) {
       return onInterceptorsGet!.call();
     } else if (getInterceptorsReturnValue != null) {

@@ -9,7 +9,8 @@ import 'package:presenter/testable.dart';
 import 'dart:core';
 
 class MockIRepository implements IRepository {
-  MockIRepositoryClassInfo info = MockIRepositoryClassInfo();
+  final dynamic _info = MockIRepositoryClassInfo();
+  MockIRepositoryClassInfo get info => _info as MockIRepositoryClassInfo;
   Future<void> Function(String param, String param2)? onSaveData;
   Future<void>? saveDataReturnValue;
   Future<List<String>> Function()? onLoadData;
@@ -42,6 +43,7 @@ class MockIRepository implements IRepository {
 
   @override
   Future<void> saveData({required String param, required String param2}) {
+    _info.saveData(param: param, param2: param2);
     if (onSaveData != null) {
       return onSaveData!.call(param, param2);
     } else if (saveDataReturnValue != null) {
@@ -53,6 +55,7 @@ class MockIRepository implements IRepository {
 
   @override
   Future<List<String>> loadData() {
+    _info.loadData();
     if (onLoadData != null) {
       return onLoadData!.call();
     } else if (loadDataReturnValue != null) {
@@ -64,6 +67,7 @@ class MockIRepository implements IRepository {
 
   @override
   void someAction() {
+    _info.someAction();
     if (onSomeAction != null) {
       return onSomeAction!.call();
     } else {
@@ -73,6 +77,7 @@ class MockIRepository implements IRepository {
 
   @override
   void b() {
+    _info.b();
     if (onB != null) {
       return onB!.call();
     } else {
@@ -82,6 +87,7 @@ class MockIRepository implements IRepository {
 
   @override
   void a() {
+    _info.a();
     if (onA != null) {
       return onA!.call();
     } else {
@@ -91,6 +97,7 @@ class MockIRepository implements IRepository {
 
   @override
   void mixinA() {
+    _info.mixinA();
     if (onMixinA != null) {
       return onMixinA!.call();
     } else {
@@ -100,6 +107,7 @@ class MockIRepository implements IRepository {
 
   @override
   String get name {
+    _info.name;
     if (onNameGet != null) {
       return onNameGet!.call();
     } else if (getNameReturnValue != null) {
@@ -111,6 +119,7 @@ class MockIRepository implements IRepository {
 
   @override
   set name(String value) {
+    _info.name = value;
     if (onNameSet != null) {
       return onNameSet!.call(value);
     } else {
@@ -120,6 +129,7 @@ class MockIRepository implements IRepository {
 
   @override
   String get wtf {
+    _info.wtf;
     if (onWtfGet != null) {
       return onWtfGet!.call();
     } else if (getWtfReturnValue != null) {
@@ -131,13 +141,13 @@ class MockIRepository implements IRepository {
 }
 
 class MockIRepositoryClassInfo extends MockClassInfo {
-  MockClassMemberInfo get saveData => getMemberInfo('saveData');
+  MockClassMemberInfo get saveDataInfo => getMemberInfo('saveData');
 
-  MockClassMemberInfo get loadData => getMemberInfo('loadData');
+  MockClassMemberInfo get loadDataInfo => getMemberInfo('loadData');
 
-  MockClassMemberInfo get someAction => getMemberInfo('someAction');
+  MockClassMemberInfo get someActionInfo => getMemberInfo('someAction');
 
-  MockClassMemberInfo get nameGet => getMemberInfo('nameGet');
+  MockClassMemberInfo get nameGetInfo => getMemberInfo('nameGet');
 
-  MockClassMemberInfo get nameSet => getMemberInfo('nameSet');
+  MockClassMemberInfo get nameSetInfo => getMemberInfo('nameSet');
 }

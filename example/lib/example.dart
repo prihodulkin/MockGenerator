@@ -1,14 +1,12 @@
-import 'package:dio/dio.dart';
-import 'package:example/example_repository.dart';
 import 'package:example/generated/example_repository.mock.dart';
-import 'package:example/generated/testable_dio.mock.dart';
 
 void main(List<String> args) async {
   final exampleRepository = MockIRepository(
     loadDataReturnValue: Future.value(['Aaa']),
+    onSomeAction: () {},
   );
   exampleRepository.someAction();
+  exampleRepository.someAction();
+  print(exampleRepository.info.someActionInfo.invocationsCount);
   print(await exampleRepository.loadData());
 }
-
-

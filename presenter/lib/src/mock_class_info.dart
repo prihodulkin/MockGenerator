@@ -169,7 +169,7 @@ class InvocationInfo {
 extension SymbolToStringX on Symbol {
   String get nameString {
     final nameSymbol = toString();
-    return nameSymbol.substring(6, nameSymbol.length - 1);
+    return nameSymbol.substring(8, nameSymbol.length - 2);
   }
 }
 

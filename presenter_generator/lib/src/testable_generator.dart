@@ -24,7 +24,8 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
     buffer
       ..writeln(
           'class $genClassName${_typeParameters(element.typeParameters)} implements $className {')
-      ..writeln('$mockInfoClassName info = $mockInfoClassName();');
+      ..writeln('final dynamic _info = $mockInfoClassName();')
+      ..writeln('$mockInfoClassName get info => _info as $mockInfoClassName;');
     _writeFields(methods, accessors, buffer);
     _writeConstructor(genClassName, methods, accessors, buffer);
     _writeMethodsImplementations(methods, buffer);
@@ -114,30 +115,36 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
       buffer.writeln('this.$parameterName,');
 
   void _writeMethodsImplementations(
-      List<MethodElement> methods, StringBuffer buffer) {
+    List<MethodElement> methods,
+    StringBuffer buffer,
+  ) {
     for (final method in methods) {
       buffer.writeln('@override');
       buffer.writeln(method.getDisplayString(withNullability: true));
       final arguments = method.parameters.map((e) => e.name).join(',');
       if (method.returnType.isVoid || method.typeParameters.isNotEmpty) {
         _writeVoidMethodOrSetterBody(
-          _callbackForMethodName(method.name),
-          arguments,
-          buffer,
+          callbackName: _callbackForMethodName(method.name),
+          arguments: arguments,
+          mockClassInfoInvocation: _mockMethodInvocation(method),
+          buffer: buffer,
         );
       } else {
         _writeMethodOrGetterBody(
-          _callbackForMethodName(method.name),
-          arguments,
-          _returnValueFieldForMethodName(method.name),
-          buffer,
+          callbackName: _callbackForMethodName(method.name),
+          callbackArguments: arguments,
+          mockClassInfoInvocation: _mockMethodInvocation(method),
+          returnValueFieldName: _returnValueFieldForMethodName(method.name),
+          buffer: buffer,
         );
       }
     }
   }
 
   void _writeAccessorsImplementations(
-      List<PropertyAccessorElement> accessors, StringBuffer buffer) {
+    List<PropertyAccessorElement> accessors,
+    StringBuffer buffer,
+  ) {
     for (final accessor in accessors) {
       buffer.writeln('@override');
       if (accessor.isGetter) {
@@ -149,42 +156,58 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
   }
 
   void _writeGetterImplementation(
-      PropertyAccessorElement getter, StringBuffer buffer) {
+    PropertyAccessorElement getter,
+    StringBuffer buffer,
+  ) {
     buffer.writeln(getter.getDisplayString(withNullability: true));
     _writeMethodOrGetterBody(
-      _callbackForGetterName(getter.displayName),
-      '',
-      _returnValueFieldForGetterName(getter.displayName),
-      buffer,
+      callbackName: _callbackForGetterName(getter.displayName),
+      callbackArguments: '',
+      returnValueFieldName: _returnValueFieldForGetterName(getter.displayName),
+      mockClassInfoInvocation: _mockGetterInvocation(getter),
+      buffer: buffer,
     );
   }
 
   void _writeSetterImplementation(
-      PropertyAccessorElement setter, StringBuffer buffer) {
+    PropertyAccessorElement setter,
+    StringBuffer buffer,
+  ) {
     final parameter = setter.parameters.first;
     buffer.writeln('set ${setter.variable.name}(${parameter.type} value)');
     _writeVoidMethodOrSetterBody(
-        _callbackForSetterName(setter.displayName), 'value', buffer);
+      callbackName: _callbackForSetterName(setter.displayName),
+      arguments: 'value',
+      mockClassInfoInvocation: _mockSetterInvocation(setter),
+      buffer: buffer,
+    );
   }
 
-  void _writeMethodOrGetterBody(
-    String callbackName,
-    String callbackArguments,
-    String returnValueFieldName,
-    StringBuffer buffer,
-  ) {
+  void _writeMethodOrGetterBody({
+    required String callbackName,
+    required String callbackArguments,
+    required String returnValueFieldName,
+    required String mockClassInfoInvocation,
+    required StringBuffer buffer,
+  }) {
     buffer
-      ..writeln('{ if($callbackName!=null){')
+      ..writeln('{ $mockClassInfoInvocation')
+      ..writeln(' if($callbackName!=null){')
       ..writeln('return $callbackName!.call($callbackArguments); } else')
       ..writeln('if($returnValueFieldName!=null) {')
       ..writeln('return $returnValueFieldName!; } else {')
       ..writeln('throw UnimplementedError();}}');
   }
 
-  void _writeVoidMethodOrSetterBody(
-      String callbackName, String arguments, StringBuffer buffer) {
+  void _writeVoidMethodOrSetterBody({
+    required String callbackName,
+    required String arguments,
+    required String mockClassInfoInvocation,
+    required StringBuffer buffer,
+  }) {
     buffer
-      ..writeln('{ if($callbackName!=null){')
+      ..writeln('{ $mockClassInfoInvocation')
+      ..writeln(' if($callbackName!=null){')
       ..writeln('return $callbackName!.call($arguments); } else{')
       ..writeln('throw UnimplementedError();}}');
   }
@@ -198,6 +221,25 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
     final parameters =
         method.parameters.map((e) => '${e.type} ${e.name}').join(',');
     return '${method.returnType} Function${_typeParameters(method.typeParameters)}($parameters)? ${_callbackForMethodName(method.name)};';
+  }
+
+  String _mockMethodInvocation(MethodElement element) {
+    final parameters = element.parameters
+        .map(
+          (param) => param.isPositional
+              ? param.displayName
+              : '${param.displayName} : ${param.displayName}',
+        )
+        .join(',');
+    return '_info.${element.displayName}${_typeParameters(element.typeParameters)}($parameters);';
+  }
+
+  String _mockGetterInvocation(PropertyAccessorElement element) {
+    return '_info.${element.displayName};';
+  }
+
+  String _mockSetterInvocation(PropertyAccessorElement element) {
+    return '_info.${element.displayName} = value;';
   }
 
   String _callbackForGetter(PropertyAccessorElement getter) =>
@@ -245,7 +287,7 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
 
   void _writeMockMemberInfo(String name, StringBuffer buffer) {
     buffer
-      ..writeln('MockClassMemberInfo get $name =>')
+      ..writeln('MockClassMemberInfo get ${name}Info =>')
       ..writeln('getMemberInfo(\'$name\');\n');
   }
 }

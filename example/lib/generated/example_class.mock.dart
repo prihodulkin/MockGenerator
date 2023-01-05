@@ -9,7 +9,8 @@ import 'package:presenter/testable.dart';
 import 'dart:core';
 
 class MockExampleClass<T> implements ExampleClass {
-  MockExampleClassClassInfo info = MockExampleClassClassInfo();
+  final dynamic _info = MockExampleClassClassInfo();
+  MockExampleClassClassInfo get info => _info as MockExampleClassClassInfo;
   T Function()? onMethod;
   T? methodReturnValue;
   String Function()? onMethod1;
@@ -32,6 +33,7 @@ class MockExampleClass<T> implements ExampleClass {
 
   @override
   T method() {
+    _info.method();
     if (onMethod != null) {
       return onMethod!.call();
     } else if (methodReturnValue != null) {
@@ -43,6 +45,7 @@ class MockExampleClass<T> implements ExampleClass {
 
   @override
   String method1() {
+    _info.method1();
     if (onMethod1 != null) {
       return onMethod1!.call();
     } else if (method1ReturnValue != null) {
@@ -54,6 +57,7 @@ class MockExampleClass<T> implements ExampleClass {
 
   @override
   S method2<S>() {
+    _info.method2<S>();
     if (onMethod2 != null) {
       return onMethod2!.call();
     } else {
@@ -63,6 +67,7 @@ class MockExampleClass<T> implements ExampleClass {
 
   @override
   String get s {
+    _info.s;
     if (onSGet != null) {
       return onSGet!.call();
     } else if (getSReturnValue != null) {
@@ -74,6 +79,7 @@ class MockExampleClass<T> implements ExampleClass {
 
   @override
   set s(String value) {
+    _info.s = value;
     if (onSSet != null) {
       return onSSet!.call(value);
     } else {
@@ -83,13 +89,13 @@ class MockExampleClass<T> implements ExampleClass {
 }
 
 class MockExampleClassClassInfo extends MockClassInfo {
-  MockClassMemberInfo get method => getMemberInfo('method');
+  MockClassMemberInfo get methodInfo => getMemberInfo('method');
 
-  MockClassMemberInfo get method1 => getMemberInfo('method1');
+  MockClassMemberInfo get method1Info => getMemberInfo('method1');
 
-  MockClassMemberInfo get method2 => getMemberInfo('method2');
+  MockClassMemberInfo get method2Info => getMemberInfo('method2');
 
-  MockClassMemberInfo get sGet => getMemberInfo('sGet');
+  MockClassMemberInfo get sGetInfo => getMemberInfo('sGet');
 
-  MockClassMemberInfo get sSet => getMemberInfo('sSet');
+  MockClassMemberInfo get sSetInfo => getMemberInfo('sSet');
 }
