@@ -10,7 +10,7 @@ import 'package:presenter/testable.dart';
 import 'dart:core';
 
 class MockTestableDio implements TestableDio {
-  final dynamic _info = MockTestableDioClassInfo();
+  final dynamic _info = MockTestableDioClassInfoImpl();
   MockTestableDioClassInfo get info => _info as MockTestableDioClassInfo;
   void Function(bool force)? onClose;
   Future<Response<T>> Function<T>(
@@ -636,4 +636,7 @@ class MockTestableDio implements TestableDio {
   }
 }
 
-class MockTestableDioClassInfo extends MockClassInfo {}
+class MockTestableDioClassInfoImpl extends MockClassInfoImpl
+    implements MockTestableDioClassInfo {}
+
+abstract class MockTestableDioClassInfo implements MockClassInfo {}

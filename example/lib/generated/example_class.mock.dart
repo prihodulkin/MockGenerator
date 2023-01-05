@@ -9,7 +9,7 @@ import 'package:presenter/testable.dart';
 import 'dart:core';
 
 class MockExampleClass<T> implements ExampleClass {
-  final dynamic _info = MockExampleClassClassInfo();
+  final dynamic _info = MockExampleClassClassInfoImpl();
   MockExampleClassClassInfo get info => _info as MockExampleClassClassInfo;
   T Function()? onMethod;
   T? methodReturnValue;
@@ -88,14 +88,28 @@ class MockExampleClass<T> implements ExampleClass {
   }
 }
 
-class MockExampleClassClassInfo extends MockClassInfo {
+class MockExampleClassClassInfoImpl extends MockClassInfoImpl
+    implements MockExampleClassClassInfo {
+  @override
   MockClassMemberInfo get methodInfo => getMemberInfo('method');
 
+  @override
   MockClassMemberInfo get method1Info => getMemberInfo('method1');
 
+  @override
   MockClassMemberInfo get method2Info => getMemberInfo('method2');
 
+  @override
   MockClassMemberInfo get sGetInfo => getMemberInfo('sGet');
 
+  @override
   MockClassMemberInfo get sSetInfo => getMemberInfo('sSet');
+}
+
+abstract class MockExampleClassClassInfo implements MockClassInfo {
+  MockClassMemberInfo get methodInfo;
+  MockClassMemberInfo get method1Info;
+  MockClassMemberInfo get method2Info;
+  MockClassMemberInfo get sGetInfo;
+  MockClassMemberInfo get sSetInfo;
 }

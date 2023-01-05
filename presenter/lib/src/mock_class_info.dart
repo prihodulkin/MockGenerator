@@ -1,6 +1,10 @@
 import 'dart:collection';
 
-class MockClassInfo {
+abstract class MockClassInfo {
+  MockClassMemberInfo getMemberInfo(String key);
+}
+
+class MockClassInfoImpl implements MockClassInfo {
   final Map<String, MockClassMemberInfo> _membersInfo = {};
 
   void invokeMember(InvocationInfo invocationInfo) {
@@ -14,6 +18,7 @@ class MockClassInfo {
     }
   }
 
+  @override
   MockClassMemberInfo getMemberInfo(String key) {
     if (!_membersInfo.containsKey(key)) {
       _membersInfo[key] = MockClassMemberInfo();

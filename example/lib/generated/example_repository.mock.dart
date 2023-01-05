@@ -9,7 +9,7 @@ import 'package:presenter/testable.dart';
 import 'dart:core';
 
 class MockIRepository implements IRepository {
-  final dynamic _info = MockIRepositoryClassInfo();
+  final dynamic _info = MockIRepositoryClassInfoImpl();
   MockIRepositoryClassInfo get info => _info as MockIRepositoryClassInfo;
   Future<void> Function(String param, String param2)? onSaveData;
   Future<void>? saveDataReturnValue;
@@ -140,14 +140,28 @@ class MockIRepository implements IRepository {
   }
 }
 
-class MockIRepositoryClassInfo extends MockClassInfo {
+class MockIRepositoryClassInfoImpl extends MockClassInfoImpl
+    implements MockIRepositoryClassInfo {
+  @override
   MockClassMemberInfo get saveDataInfo => getMemberInfo('saveData');
 
+  @override
   MockClassMemberInfo get loadDataInfo => getMemberInfo('loadData');
 
+  @override
   MockClassMemberInfo get someActionInfo => getMemberInfo('someAction');
 
+  @override
   MockClassMemberInfo get nameGetInfo => getMemberInfo('nameGet');
 
+  @override
   MockClassMemberInfo get nameSetInfo => getMemberInfo('nameSet');
+}
+
+abstract class MockIRepositoryClassInfo implements MockClassInfo {
+  MockClassMemberInfo get saveDataInfo;
+  MockClassMemberInfo get loadDataInfo;
+  MockClassMemberInfo get someActionInfo;
+  MockClassMemberInfo get nameGetInfo;
+  MockClassMemberInfo get nameSetInfo;
 }

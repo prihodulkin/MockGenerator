@@ -24,7 +24,7 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
     buffer
       ..writeln(
           'class $genClassName${_typeParameters(element.typeParameters)} implements $className {')
-      ..writeln('final dynamic _info = $mockInfoClassName();')
+      ..writeln('final dynamic _info = ${mockInfoClassName}Impl();')
       ..writeln('$mockInfoClassName get info => _info as $mockInfoClassName;');
     _writeFields(methods, accessors, buffer);
     _writeConstructor(genClassName, methods, accessors, buffer);
@@ -272,7 +272,8 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
 
   String _writeMockClassInfo(
       ClassElement element, String className, StringBuffer buffer) {
-    buffer.writeln('class $className extends MockClassInfo {\n');
+    buffer.writeln(
+        'class ${className}Impl extends MockClassInfoImpl implements $className {\n');
     for (final method in element.methods) {
       _writeMockMemberInfo(method.displayName, buffer);
     }
@@ -282,11 +283,24 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
       _writeMockMemberInfo(name, buffer);
     }
     buffer.writeln('}');
+
+    buffer.writeln('abstract class $className implements MockClassInfo {\n');
+    for (final method in element.methods) {
+      buffer.writeln('MockClassMemberInfo get ${method.displayName}Info;');
+    }
+    for (final accessor in element.accessors) {
+      final name =
+          '${accessor.displayName}${accessor.isGetter ? 'Get' : 'Set'}';
+      buffer.writeln('MockClassMemberInfo get ${name}Info;');
+    }
+    buffer.writeln('}');
+
     return buffer.toString();
   }
 
   void _writeMockMemberInfo(String name, StringBuffer buffer) {
     buffer
+      ..writeln('@override')
       ..writeln('MockClassMemberInfo get ${name}Info =>')
       ..writeln('getMemberInfo(\'$name\');\n');
   }
