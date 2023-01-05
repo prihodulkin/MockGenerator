@@ -15,22 +15,23 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
     final methods = List<MethodElement>.from(element.methods);
     final accessors = List<PropertyAccessorElement>.from(element.accessors);
     _addAllMethodsAndAccessorsFromSupertypes(methods, accessors, element);
-    final classBuffer = StringBuffer()
-      ..writeln('import \'${element.source.uri}\';');
+    final buffer = StringBuffer()..writeln('import \'${element.source.uri}\';');
     for (final lib in element.library.importedLibraries) {
-      if (lib.source.uri.toString() != 'package:presenter/testable.dart') {
-        classBuffer.writeln('import \'${lib.source.uri}\';');
-      }
+      buffer.writeln('import \'${lib.source.uri}\';');
     }
     final genClassName = 'Mock$className';
-    classBuffer.writeln(
-        'class $genClassName${_typeParameters(element.typeParameters)} implements $className {');
-    _writeFields(methods, accessors, classBuffer);
-    _writeConstructor(genClassName, methods, accessors, classBuffer);
-    _writeMethodsImplementations(methods, classBuffer);
-    _writeAccessorsImplementations(accessors, classBuffer);
-    classBuffer.writeln('}');
-    return classBuffer.toString();
+    final String mockInfoClassName = 'Mock${element.displayName}ClassInfo';
+    buffer
+      ..writeln(
+          'class $genClassName${_typeParameters(element.typeParameters)} implements $className {')
+      ..writeln('$mockInfoClassName info = $mockInfoClassName();');
+    _writeFields(methods, accessors, buffer);
+    _writeConstructor(genClassName, methods, accessors, buffer);
+    _writeMethodsImplementations(methods, buffer);
+    _writeAccessorsImplementations(accessors, buffer);
+    buffer.writeln('}');
+    _writeMockClassInfo(element, mockInfoClassName, buffer);
+    return buffer.toString();
   }
 
   void _addAllMethodsAndAccessorsFromSupertypes(
@@ -50,42 +51,42 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
   void _writeFields(
     List<MethodElement> methods,
     List<PropertyAccessorElement> accessors,
-    StringBuffer classBuffer,
+    StringBuffer buffer,
   ) {
     for (final method in methods) {
-      classBuffer.writeln(_callbackForMethod(method));
+      buffer.writeln(_callbackForMethod(method));
       if (!method.returnType.isVoid && method.typeParameters.isEmpty) {
-        classBuffer.writeln(_returnValueFieldForMethod(method));
+        buffer.writeln(_returnValueFieldForMethod(method));
       }
     }
     for (final accessor in accessors) {
       if (accessor.isGetter) {
-        classBuffer
+        buffer
           ..writeln(_returnValueFieldForGetter(accessor))
           ..writeln(_callbackForGetter(accessor));
       } else {
-        classBuffer.writeln(_callbackForSetter(accessor));
+        buffer.writeln(_callbackForSetter(accessor));
       }
     }
-    classBuffer.writeln();
+    buffer.writeln();
   }
 
   void _writeConstructor(
     String className,
     List<MethodElement> methods,
     List<PropertyAccessorElement> accessors,
-    StringBuffer classBuffer,
+    StringBuffer buffer,
   ) {
-    classBuffer.writeln('$className({ ');
+    buffer.writeln('$className({ ');
     for (final method in methods) {
       _writeParameterAssignment(
         _callbackForMethodName(method.name),
-        classBuffer,
+        buffer,
       );
       if (!method.returnType.isVoid && method.typeParameters.isEmpty) {
         _writeParameterAssignment(
           _returnValueFieldForMethodName(method.name),
-          classBuffer,
+          buffer,
         );
       }
     }
@@ -93,87 +94,86 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
       if (accessor.isGetter) {
         _writeParameterAssignment(
           _callbackForGetterName(accessor.displayName),
-          classBuffer,
+          buffer,
         );
         _writeParameterAssignment(
           _returnValueFieldForGetterName(accessor.displayName),
-          classBuffer,
+          buffer,
         );
       } else {
         _writeParameterAssignment(
           _callbackForSetterName(accessor.displayName),
-          classBuffer,
+          buffer,
         );
       }
     }
-    classBuffer.writeln('});\n');
+    buffer.writeln('});\n');
   }
 
-  void _writeParameterAssignment(
-          String parameterName, StringBuffer classBuffer) =>
-      classBuffer.writeln('this.$parameterName,');
+  void _writeParameterAssignment(String parameterName, StringBuffer buffer) =>
+      buffer.writeln('this.$parameterName,');
 
   void _writeMethodsImplementations(
-      List<MethodElement> methods, StringBuffer classBuffer) {
+      List<MethodElement> methods, StringBuffer buffer) {
     for (final method in methods) {
-      classBuffer.writeln('@override');
-      classBuffer.writeln(method.getDisplayString(withNullability: true));
+      buffer.writeln('@override');
+      buffer.writeln(method.getDisplayString(withNullability: true));
       final arguments = method.parameters.map((e) => e.name).join(',');
       if (method.returnType.isVoid || method.typeParameters.isNotEmpty) {
         _writeVoidMethodOrSetterBody(
           _callbackForMethodName(method.name),
           arguments,
-          classBuffer,
+          buffer,
         );
       } else {
         _writeMethodOrGetterBody(
           _callbackForMethodName(method.name),
           arguments,
           _returnValueFieldForMethodName(method.name),
-          classBuffer,
+          buffer,
         );
       }
     }
   }
 
   void _writeAccessorsImplementations(
-      List<PropertyAccessorElement> accessors, StringBuffer classBuffer) {
+      List<PropertyAccessorElement> accessors, StringBuffer buffer) {
     for (final accessor in accessors) {
-      classBuffer.writeln('@override');
+      buffer.writeln('@override');
       if (accessor.isGetter) {
-        _writeGetterImplementation(accessor, classBuffer);
+        _writeGetterImplementation(accessor, buffer);
       } else {
-        _writeSetterImplementation(accessor, classBuffer);
+        _writeSetterImplementation(accessor, buffer);
       }
     }
   }
 
   void _writeGetterImplementation(
-      PropertyAccessorElement getter, StringBuffer classBuffer) {
-    classBuffer.writeln(getter.getDisplayString(withNullability: true));
+      PropertyAccessorElement getter, StringBuffer buffer) {
+    buffer.writeln(getter.getDisplayString(withNullability: true));
     _writeMethodOrGetterBody(
       _callbackForGetterName(getter.displayName),
       '',
       _returnValueFieldForGetterName(getter.displayName),
-      classBuffer,
+      buffer,
     );
   }
 
   void _writeSetterImplementation(
-      PropertyAccessorElement setter, StringBuffer classBuffer) {
+      PropertyAccessorElement setter, StringBuffer buffer) {
     final parameter = setter.parameters.first;
-    classBuffer.writeln('set ${setter.variable.name}(${parameter.type} value)');
+    buffer.writeln('set ${setter.variable.name}(${parameter.type} value)');
     _writeVoidMethodOrSetterBody(
-        _callbackForSetterName(setter.displayName), 'value', classBuffer);
+        _callbackForSetterName(setter.displayName), 'value', buffer);
   }
 
   void _writeMethodOrGetterBody(
     String callbackName,
     String callbackArguments,
     String returnValueFieldName,
-    StringBuffer classBuffer,
+    StringBuffer buffer,
   ) {
-    classBuffer
+    buffer
       ..writeln('{ if($callbackName!=null){')
       ..writeln('return $callbackName!.call($callbackArguments); } else')
       ..writeln('if($returnValueFieldName!=null) {')
@@ -182,8 +182,8 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
   }
 
   void _writeVoidMethodOrSetterBody(
-      String callbackName, String arguments, StringBuffer classBuffer) {
-    classBuffer
+      String callbackName, String arguments, StringBuffer buffer) {
+    buffer
       ..writeln('{ if($callbackName!=null){')
       ..writeln('return $callbackName!.call($arguments); } else{')
       ..writeln('throw UnimplementedError();}}');
@@ -227,4 +227,25 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
 
   String _returnValueFieldForGetterName(String getterName) =>
       'get${getterName[0].toUpperCase()}${getterName.substring(1)}ReturnValue';
+
+  String _writeMockClassInfo(
+      ClassElement element, String className, StringBuffer buffer) {
+    buffer.writeln('class $className extends MockClassInfo {\n');
+    for (final method in element.methods) {
+      _writeMockMemberInfo(method.displayName, buffer);
+    }
+    for (final accessor in element.accessors) {
+      final name =
+          '${accessor.displayName}${accessor.isGetter ? 'Get' : 'Set'}';
+      _writeMockMemberInfo(name, buffer);
+    }
+    buffer.writeln('}');
+    return buffer.toString();
+  }
+
+  void _writeMockMemberInfo(String name, StringBuffer buffer) {
+    buffer
+      ..writeln('MockClassMemberInfo get $name =>')
+      ..writeln('getMemberInfo(\'$name\');\n');
+  }
 }

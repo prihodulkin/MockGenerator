@@ -5,9 +5,11 @@
 // **************************************************************************
 
 import 'package:example/example_class.dart';
+import 'package:presenter/testable.dart';
 import 'dart:core';
 
 class MockExampleClass<T> implements ExampleClass {
+  MockExampleClassClassInfo info = MockExampleClassClassInfo();
   T Function()? onMethod;
   T? methodReturnValue;
   String Function()? onMethod1;
@@ -78,4 +80,16 @@ class MockExampleClass<T> implements ExampleClass {
       throw UnimplementedError();
     }
   }
+}
+
+class MockExampleClassClassInfo extends MockClassInfo {
+  MockClassMemberInfo get method => getMemberInfo('method');
+
+  MockClassMemberInfo get method1 => getMemberInfo('method1');
+
+  MockClassMemberInfo get method2 => getMemberInfo('method2');
+
+  MockClassMemberInfo get sGet => getMemberInfo('sGet');
+
+  MockClassMemberInfo get sSet => getMemberInfo('sSet');
 }

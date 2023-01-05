@@ -5,9 +5,11 @@
 // **************************************************************************
 
 import 'package:example/example_repository.dart';
+import 'package:presenter/testable.dart';
 import 'dart:core';
 
 class MockIRepository implements IRepository {
+  MockIRepositoryClassInfo info = MockIRepositoryClassInfo();
   Future<void> Function(String param, String param2)? onSaveData;
   Future<void>? saveDataReturnValue;
   Future<List<String>> Function()? onLoadData;
@@ -126,4 +128,16 @@ class MockIRepository implements IRepository {
       throw UnimplementedError();
     }
   }
+}
+
+class MockIRepositoryClassInfo extends MockClassInfo {
+  MockClassMemberInfo get saveData => getMemberInfo('saveData');
+
+  MockClassMemberInfo get loadData => getMemberInfo('loadData');
+
+  MockClassMemberInfo get someAction => getMemberInfo('someAction');
+
+  MockClassMemberInfo get nameGet => getMemberInfo('nameGet');
+
+  MockClassMemberInfo get nameSet => getMemberInfo('nameSet');
 }

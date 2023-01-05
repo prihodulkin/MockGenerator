@@ -6,9 +6,11 @@
 
 import 'package:example/testable_dio.dart';
 import 'package:dio/dio.dart';
+import 'package:presenter/testable.dart';
 import 'dart:core';
 
 class MockTestableDio implements TestableDio {
+  MockTestableDioClassInfo info = MockTestableDioClassInfo();
   void Function(bool force)? onClose;
   Future<Response<T>> Function<T>(
       String path,
@@ -530,3 +532,5 @@ class MockTestableDio implements TestableDio {
     }
   }
 }
+
+class MockTestableDioClassInfo extends MockClassInfo {}
