@@ -6,7 +6,7 @@ import 'package:mock/mock.dart';
 import 'package:source_gen/source_gen.dart';
 
 class MockGenerator extends Generator {
-  TypeChecker get typeChecker => TypeChecker.fromRuntime(MockAnnotation);
+  TypeChecker get typeChecker => TypeChecker.fromRuntime(Mock);
 
   @override
   FutureOr<String> generate(LibraryReader library, BuildStep buildStep) async {
@@ -24,7 +24,7 @@ class MockGenerator extends Generator {
           .importedLibraries) {
         imports.add('import \'${lib.source.uri}\';');
       }
-      final generatedValue = generateForAnnotatedElement(
+      final generatedValue = _generateForAnnotatedElement(
         annotatedElement.element,
         annotatedElement.annotation,
         buildStep,
@@ -35,7 +35,7 @@ class MockGenerator extends Generator {
     return imports.join('\n') + values.join('\n\n');
   }
 
-  String generateForAnnotatedElement(
+  String _generateForAnnotatedElement(
     Element element,
     ConstantReader annotation,
     BuildStep buildStep,
@@ -45,10 +45,11 @@ class MockGenerator extends Generator {
     final methods = List<MethodElement>.from(element.methods);
     final accessors = List<PropertyAccessorElement>.from(element.accessors);
     _addAllMethodsAndAccessorsFromSupertypes(methods, accessors, element);
-    final buffer = StringBuffer();
-    final genClassName = 'Mock$className';
-    final String mockInfoInterfaceName = 'Mock${element.displayName}ClassInfo';
-    buffer
+    final genClassName =
+        annotation.objectValue.getField('name')?.toStringValue() ??
+            'Mock$className';
+    final String mockInfoInterfaceName = '${genClassName}ClassInfo';
+    final buffer = StringBuffer()
       ..writeln(
           'class $genClassName${_typeParameters(element.typeParameters)} implements $className {')
       ..writeln('final dynamic _info = ${mockInfoInterfaceName}Impl();')

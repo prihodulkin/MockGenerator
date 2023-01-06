@@ -8,13 +8,13 @@ import 'package:example/example_class_1.dart';
 import 'package:mock/mock.dart';
 import 'dart:core';
 
-class MockExampleClass implements ExampleClass {
-  final dynamic _info = MockExampleClassClassInfoImpl();
-  MockExampleClassClassInfo get info => _info as MockExampleClassClassInfo;
+class GoodMockExample implements ExampleClass {
+  final dynamic _info = GoodMockExampleClassInfoImpl();
+  GoodMockExampleClassInfo get info => _info as GoodMockExampleClassInfo;
   String Function()? onAbc;
   String? abcReturnValue;
 
-  MockExampleClass({
+  GoodMockExample({
     this.onAbc,
     this.abcReturnValue,
   });
@@ -32,12 +32,12 @@ class MockExampleClass implements ExampleClass {
   }
 }
 
-class MockExampleClassClassInfoImpl extends MockClassInfo
-    implements MockExampleClassClassInfo {
+class GoodMockExampleClassInfoImpl extends MockClassInfo
+    implements GoodMockExampleClassInfo {
   @override
   MockClassMemberInfo get abcInfo => getMemberInfo('abc');
 }
 
-abstract class MockExampleClassClassInfo {
+abstract class GoodMockExampleClassInfo {
   MockClassMemberInfo get abcInfo;
 }
