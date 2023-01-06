@@ -167,3 +167,72 @@ abstract class MockIRepositoryClassInfo {
   MockClassMemberInfo get nameGetInfo;
   MockClassMemberInfo get nameSetInfo;
 }
+
+class MockB implements B {
+  final dynamic _info = MockBClassInfoImpl();
+  MockBClassInfo get info => _info as MockBClassInfo;
+  void Function()? onB;
+  void Function()? onA;
+  void Function()? onMixinA;
+  String? getWtfReturnValue;
+  String Function()? onWtfGet;
+
+  MockB({
+    this.onB,
+    this.onA,
+    this.onMixinA,
+    this.onWtfGet,
+    this.getWtfReturnValue,
+  });
+
+  @override
+  void b() {
+    _info.b();
+    if (onB != null) {
+      return onB!.call();
+    } else {
+      throw UnimplementedError();
+    }
+  }
+
+  @override
+  void a() {
+    _info.a();
+    if (onA != null) {
+      return onA!.call();
+    } else {
+      throw UnimplementedError();
+    }
+  }
+
+  @override
+  void mixinA() {
+    _info.mixinA();
+    if (onMixinA != null) {
+      return onMixinA!.call();
+    } else {
+      throw UnimplementedError();
+    }
+  }
+
+  @override
+  String get wtf {
+    _info.wtf;
+    if (onWtfGet != null) {
+      return onWtfGet!.call();
+    } else if (getWtfReturnValue != null) {
+      return getWtfReturnValue!;
+    } else {
+      throw UnimplementedError();
+    }
+  }
+}
+
+class MockBClassInfoImpl extends MockClassInfo implements MockBClassInfo {
+  @override
+  MockClassMemberInfo get bInfo => getMemberInfo('b');
+}
+
+abstract class MockBClassInfo {
+  MockClassMemberInfo get bInfo;
+}

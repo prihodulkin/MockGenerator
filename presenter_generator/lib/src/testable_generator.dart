@@ -1,24 +1,51 @@
+import 'dart:async';
+
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:presenter/testable.dart';
 import 'package:source_gen/source_gen.dart';
 
-class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
+class TestableGenerator extends Generator {
+  TypeChecker get typeChecker => TypeChecker.fromRuntime(TestableAnnotation);
+
   @override
-  generateForAnnotatedElement(
+  FutureOr<String> generate(LibraryReader library, BuildStep buildStep) async {
+    final values = <String>{};
+    final imports = <String>{};
+    final annotatedElements = library.annotatedWith(typeChecker);
+
+    for (var annotatedElement in annotatedElements) {
+      if (annotatedElement.element is ClassElement) {
+        imports.add(
+            'import \'${(annotatedElement.element as ClassElement).source.uri}\';');
+      }
+      for (final lib in (annotatedElement.element as ClassElement)
+          .library
+          .importedLibraries) {
+        imports.add('import \'${lib.source.uri}\';');
+      }
+      final generatedValue = generateForAnnotatedElement(
+        annotatedElement.element,
+        annotatedElement.annotation,
+        buildStep,
+      );
+      values.add(generatedValue);
+    }
+
+    return imports.join('\n') + values.join('\n\n');
+  }
+
+  String generateForAnnotatedElement(
     Element element,
     ConstantReader annotation,
     BuildStep buildStep,
   ) {
-    if (element is! ClassElement) return;
+    if (element is! ClassElement) return '';
     final className = element.name;
     final methods = List<MethodElement>.from(element.methods);
     final accessors = List<PropertyAccessorElement>.from(element.accessors);
     _addAllMethodsAndAccessorsFromSupertypes(methods, accessors, element);
-    final buffer = StringBuffer()..writeln('import \'${element.source.uri}\';');
-    for (final lib in element.library.importedLibraries) {
-      buffer.writeln('import \'${lib.source.uri}\';');
-    }
+    final buffer = StringBuffer();
     final genClassName = 'Mock$className';
     final String mockInfoInterfaceName = 'Mock${element.displayName}ClassInfo';
     buffer
@@ -236,9 +263,11 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
     return '_info.${element.displayName}${_typeParameters(element.typeParameters)}($parameters);';
   }
 
-  String _mockGetterInvocation(PropertyAccessorElement element) => '_info.${element.displayName};';
+  String _mockGetterInvocation(PropertyAccessorElement element) =>
+      '_info.${element.displayName};';
 
-  String _mockSetterInvocation(PropertyAccessorElement element) => '_info.${element.displayName} = value;';
+  String _mockSetterInvocation(PropertyAccessorElement element) =>
+      '_info.${element.displayName} = value;';
 
   String _callbackForGetter(PropertyAccessorElement getter) =>
       '${getter.returnType} Function()? ${_callbackForGetterName(getter.name)};';
@@ -285,8 +314,7 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
 
   void _writeMockClassInfoInterface(
       ClassElement element, String interfaceName, StringBuffer buffer) {
-    buffer
-        .writeln('abstract class $interfaceName {\n');
+    buffer.writeln('abstract class $interfaceName {\n');
     for (final method in element.methods) {
       buffer.writeln('MockClassMemberInfo get ${method.displayName}Info;');
     }

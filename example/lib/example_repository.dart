@@ -17,6 +17,7 @@ abstract class IRepository with MixinA implements B {
   void someAction();
 }
 
+@testable
 abstract class B implements A {
   void b();
 }

@@ -7,7 +7,7 @@ abstract class ExampleClass<T> {
 
   T method();
 
-  String method1();
+  String method1()=>'s';
 
   S method2<S>();
 }
