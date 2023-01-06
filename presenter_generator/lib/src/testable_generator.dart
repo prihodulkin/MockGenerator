@@ -20,18 +20,18 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
       buffer.writeln('import \'${lib.source.uri}\';');
     }
     final genClassName = 'Mock$className';
-    final String mockInfoClassName = 'Mock${element.displayName}ClassInfo';
+    final String mockInfoInterfaceName = 'Mock${element.displayName}ClassInfo';
     buffer
       ..writeln(
           'class $genClassName${_typeParameters(element.typeParameters)} implements $className {')
-      ..writeln('final dynamic _info = ${mockInfoClassName}Impl();')
-      ..writeln('$mockInfoClassName get info => _info as $mockInfoClassName;');
+      ..writeln('final dynamic _info = ${mockInfoInterfaceName}Impl();')
+      ..writeln('$mockInfoInterfaceName get info => _info as $mockInfoInterfaceName;');
     _writeFields(methods, accessors, buffer);
     _writeConstructor(genClassName, methods, accessors, buffer);
     _writeMethodsImplementations(methods, buffer);
     _writeAccessorsImplementations(accessors, buffer);
     buffer.writeln('}');
-    _writeMockClassInfo(element, mockInfoClassName, buffer);
+    _writeMockClassInfo(element, mockInfoInterfaceName, buffer);
     return buffer.toString();
   }
 
@@ -271,9 +271,9 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
       'get${getterName[0].toUpperCase()}${getterName.substring(1)}ReturnValue';
 
   String _writeMockClassInfo(
-      ClassElement element, String className, StringBuffer buffer) {
+      ClassElement element, String interfaceName, StringBuffer buffer) {
     buffer.writeln(
-        'class ${className}Impl extends MockClassInfoImpl implements $className {\n');
+        'class ${interfaceName}Impl extends MockClassInfoImpl implements $interfaceName {\n');
     for (final method in element.methods) {
       _writeMockMemberInfo(method.displayName, buffer);
     }
@@ -284,7 +284,7 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
     }
     buffer.writeln('}');
 
-    buffer.writeln('abstract class $className implements MockClassInfo {\n');
+    buffer.writeln('abstract class $interfaceName implements MockClassInfo {\n');
     for (final method in element.methods) {
       buffer.writeln('MockClassMemberInfo get ${method.displayName}Info;');
     }

@@ -1,5 +1,7 @@
 import 'dart:collection';
 
+import 'package:presenter/src/collections_equality.dart';
+
 abstract class MockClassInfo {
   MockClassMemberInfo getMemberInfo(String key);
 }
@@ -164,10 +166,9 @@ class InvocationInfo {
     }
     return name == other.name &&
         type == other.type &&
-        // TODO: add deep compairson
-        positionalArguments == other.positionalArguments &&
-        namedArguments == other.namedArguments &&
-        typeArguments == other.typeArguments;
+        listEquals(positionalArguments, other.positionalArguments) &&
+        mapEquals(namedArguments, other.namedArguments) &&
+        listEquals(typeArguments, other.typeArguments);
   }
 }
 
