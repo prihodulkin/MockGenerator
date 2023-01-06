@@ -2,9 +2,11 @@ import 'dart:collection';
 
 import 'package:presenter/src/collections_equality.dart';
 
+/// Class with information about other class methods' invocations.
 class MockClassInfo {
   final Map<String, MockClassMemberInfo> _membersInfo = {};
-
+ 
+  /// Saves [invocationInfo] in [MockClassMemberInfo] by key [invocationInfo.key].
   void invokeMember(InvocationInfo invocationInfo) {
     final key = invocationInfo.key;
     if (_membersInfo.containsKey(key)) {
@@ -17,18 +19,24 @@ class MockClassInfo {
       );
     }
   }
-
+ 
+  /// Returns [MockClassMemberInfo] by [key].
   MockClassMemberInfo getMemberInfo(String key) => _membersInfo[key]!;
 
+  /// Overrides [Object.noSuchMethod] to simplify calls of [invokeMember] method from generated code.
   @override
   noSuchMethod(Invocation invocation) =>
       invokeMember(InvocationInfo.fromInvocation(invocation));
 }
 
+/// Class with information about some class member's invocations.
 class MockClassMemberInfo {
+  /// Member name.
   final String name;
+  /// Type of member.
   final InvocationType type;
   final List<InvocationInfo> _invocations;
+  /// Read-only invocations list.
   late final UnmodifiableListView<InvocationInfo> invocations =
       UnmodifiableListView(_invocations);
 
