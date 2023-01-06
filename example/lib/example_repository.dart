@@ -1,10 +1,10 @@
-import 'package:presenter/testable.dart';
+import 'package:mock/mock.dart';
 
-@testable
+@mock
 abstract class IRepository with MixinA implements B {
   Future<void> saveData({
     required String param,
-    required String param2, 
+    required String param2,
     String? param3,
   });
 
@@ -17,7 +17,7 @@ abstract class IRepository with MixinA implements B {
   void someAction();
 }
 
-@testable
+@mock
 abstract class B implements A {
   void b();
 }

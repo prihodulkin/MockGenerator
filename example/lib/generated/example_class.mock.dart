@@ -1,11 +1,11 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
-// TestableGenerator
+// MockGenerator
 // **************************************************************************
 
 import 'package:example/example_class.dart';
-import 'package:presenter/testable.dart';
+import 'package:mock/mock.dart';
 import 'dart:core';
 
 class MockExampleClass<T> implements ExampleClass {

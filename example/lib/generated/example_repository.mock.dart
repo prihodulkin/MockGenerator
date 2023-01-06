@@ -1,11 +1,11 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
-// TestableGenerator
+// MockGenerator
 // **************************************************************************
 
 import 'package:example/example_repository.dart';
-import 'package:presenter/testable.dart';
+import 'package:mock/mock.dart';
 import 'dart:core';
 
 class MockIRepository implements IRepository {

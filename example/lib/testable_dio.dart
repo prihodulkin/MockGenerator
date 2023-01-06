@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:presenter/testable.dart';
+import 'package:mock/mock.dart';
 
-@testable
-abstract class TestableDio implements Dio{}
+@mock
+abstract class TestableDio implements Dio {}

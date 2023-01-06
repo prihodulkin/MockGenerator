@@ -1,7 +1,7 @@
 builders:
   mock_builder:
-    import: "package:presenter_generator/testable_generator.dart"
-    builder_factories: ["generateExecutor"]
+    import: "package:mock_generator/mock_generator.dart"
+    builder_factories: ["generateMocks"]
     build_extensions: {'.dart': ['.mock.dart']}
     auto_apply: dependents
     build_to: source

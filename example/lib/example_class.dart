@@ -1,13 +1,13 @@
-import 'package:presenter/testable.dart';
+import 'package:mock/mock.dart';
 
-@testable
+@mock
 abstract class ExampleClass<T> {
   String s;
   ExampleClass({required this.s});
 
   T method();
 
-  String method1()=>'s';
+  String method1() => 's';
 
   S method2<S>();
 }

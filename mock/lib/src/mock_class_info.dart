@@ -1,11 +1,11 @@
 import 'dart:collection';
 
-import 'package:presenter/src/collections_equality.dart';
+import 'package:mock/src/collections_equality.dart';
 
 /// Class with information about other class methods' invocations.
 class MockClassInfo {
   final Map<String, MockClassMemberInfo> _membersInfo = {};
- 
+
   /// Saves [invocationInfo] in [MockClassMemberInfo] by key [invocationInfo.key].
   void invokeMember(InvocationInfo invocationInfo) {
     final key = invocationInfo.key;
@@ -19,7 +19,7 @@ class MockClassInfo {
       );
     }
   }
- 
+
   /// Returns [MockClassMemberInfo] by [key].
   MockClassMemberInfo getMemberInfo(String key) => _membersInfo[key]!;
 
@@ -33,9 +33,11 @@ class MockClassInfo {
 class MockClassMemberInfo {
   /// Member name.
   final String name;
+
   /// Type of member.
   final InvocationType type;
   final List<InvocationInfo> _invocations;
+
   /// Read-only invocations list.
   late final UnmodifiableListView<InvocationInfo> invocations =
       UnmodifiableListView(_invocations);

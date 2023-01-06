@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
-import 'package:presenter/testable.dart';
+import 'package:mock/mock.dart';
 import 'package:source_gen/source_gen.dart';
 
-class TestableGenerator extends Generator {
-  TypeChecker get typeChecker => TypeChecker.fromRuntime(TestableAnnotation);
+class MockGenerator extends Generator {
+  TypeChecker get typeChecker => TypeChecker.fromRuntime(MockAnnotation);
 
   @override
   FutureOr<String> generate(LibraryReader library, BuildStep buildStep) async {

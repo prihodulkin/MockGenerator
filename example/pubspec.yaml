@@ -11,10 +11,10 @@ dependencies:
   source_gen: ^1.1.0
   build_config:
   build_runner:
-  presenter_generator: 
-    path: ../presenter_generator
-  presenter: 
-    path: ../presenter
+  mock_generator: 
+    path: ../mock_generator
+  mock: 
+    path: ../mock
 
 dev_dependencies:
   lints: ^2.0.0
