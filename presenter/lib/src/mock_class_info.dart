@@ -2,11 +2,7 @@ import 'dart:collection';
 
 import 'package:presenter/src/collections_equality.dart';
 
-abstract class MockClassInfo {
-  MockClassMemberInfo getMemberInfo(String key);
-}
-
-class MockClassInfoImpl implements MockClassInfo {
+class MockClassInfo {
   final Map<String, MockClassMemberInfo> _membersInfo = {};
 
   void invokeMember(InvocationInfo invocationInfo) {
@@ -15,18 +11,14 @@ class MockClassInfoImpl implements MockClassInfo {
       _membersInfo[key]!.invoke(invocationInfo);
     } else {
       _membersInfo[key] = MockClassMemberInfo(
+        name: invocationInfo.name,
+        type: invocationInfo.type,
         invocations: [invocationInfo],
       );
     }
   }
 
-  @override
-  MockClassMemberInfo getMemberInfo(String key) {
-    if (!_membersInfo.containsKey(key)) {
-      _membersInfo[key] = MockClassMemberInfo();
-    }
-    return _membersInfo[key]!;
-  }
+  MockClassMemberInfo getMemberInfo(String key) => _membersInfo[key]!;
 
   @override
   noSuchMethod(Invocation invocation) =>
@@ -34,20 +26,34 @@ class MockClassInfoImpl implements MockClassInfo {
 }
 
 class MockClassMemberInfo {
+  final String name;
+  final InvocationType type;
   final List<InvocationInfo> _invocations;
   late final UnmodifiableListView<InvocationInfo> invocations =
       UnmodifiableListView(_invocations);
 
-  MockClassMemberInfo({List<InvocationInfo>? invocations})
-      : _invocations = List.from(invocations ?? []);
+  MockClassMemberInfo({
+    required this.name,
+    required this.type,
+    List<InvocationInfo>? invocations,
+  }) : _invocations = List.from(invocations ?? []);
 
   void invoke(InvocationInfo invocationInfo) =>
       _invocations.add(invocationInfo);
 
-  int calledWith(
-    InvocationInfo invocationInfo, {
+  int calledWith({
+    List<dynamic>? positionalArguments,
+    List<Type>? typeArguments,
+    Map<String, dynamic>? namedArguments,
     bool Function(InvocationInfo, InvocationInfo)? predicate,
   }) {
+    final invocationInfo = InvocationInfo._(
+      name: name,
+      positionalArguments: positionalArguments ?? const [],
+      namedArguments: namedArguments ?? const {},
+      typeArguments: typeArguments ?? const [],
+      type: type,
+    );
     predicate = predicate ?? (a, b) => a == b;
     return invocations
         .where((element) => predicate!(element, invocationInfo))
@@ -126,7 +132,7 @@ class InvocationInfo {
         positionalArguments: invocation.positionalArguments,
         namedArguments: invocation.namedArguments.map(
           (key, value) => MapEntry(key.nameString, value),
-        ),
+        )..removeWhere((key, value) => value == null),
       );
     } else if (invocation.isGetter) {
       return InvocationInfo.getter(

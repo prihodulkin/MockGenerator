@@ -88,7 +88,7 @@ class MockExampleClass<T> implements ExampleClass {
   }
 }
 
-class MockExampleClassClassInfoImpl extends MockClassInfoImpl
+class MockExampleClassClassInfoImpl extends MockClassInfo
     implements MockExampleClassClassInfo {
   @override
   MockClassMemberInfo get methodInfo => getMemberInfo('method');
@@ -106,7 +106,7 @@ class MockExampleClassClassInfoImpl extends MockClassInfoImpl
   MockClassMemberInfo get sSetInfo => getMemberInfo('sSet');
 }
 
-abstract class MockExampleClassClassInfo implements MockClassInfo {
+abstract class MockExampleClassClassInfo {
   MockClassMemberInfo get methodInfo;
   MockClassMemberInfo get method1Info;
   MockClassMemberInfo get method2Info;

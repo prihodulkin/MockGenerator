@@ -5,6 +5,7 @@ abstract class IRepository with MixinA implements B {
   Future<void> saveData({
     required String param,
     required String param2, 
+    String? param3,
   });
 
   Future<List<String>> loadData();

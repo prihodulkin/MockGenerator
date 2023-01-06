@@ -636,7 +636,7 @@ class MockTestableDio implements TestableDio {
   }
 }
 
-class MockTestableDioClassInfoImpl extends MockClassInfoImpl
+class MockTestableDioClassInfoImpl extends MockClassInfo
     implements MockTestableDioClassInfo {}
 
-abstract class MockTestableDioClassInfo implements MockClassInfo {}
+abstract class MockTestableDioClassInfo {}

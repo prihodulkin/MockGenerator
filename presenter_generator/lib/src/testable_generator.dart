@@ -25,13 +25,15 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
       ..writeln(
           'class $genClassName${_typeParameters(element.typeParameters)} implements $className {')
       ..writeln('final dynamic _info = ${mockInfoInterfaceName}Impl();')
-      ..writeln('$mockInfoInterfaceName get info => _info as $mockInfoInterfaceName;');
+      ..writeln(
+          '$mockInfoInterfaceName get info => _info as $mockInfoInterfaceName;');
     _writeFields(methods, accessors, buffer);
     _writeConstructor(genClassName, methods, accessors, buffer);
     _writeMethodsImplementations(methods, buffer);
     _writeAccessorsImplementations(accessors, buffer);
     buffer.writeln('}');
     _writeMockClassInfo(element, mockInfoInterfaceName, buffer);
+    _writeMockClassInfoInterface(element, mockInfoInterfaceName, buffer);
     return buffer.toString();
   }
 
@@ -234,13 +236,9 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
     return '_info.${element.displayName}${_typeParameters(element.typeParameters)}($parameters);';
   }
 
-  String _mockGetterInvocation(PropertyAccessorElement element) {
-    return '_info.${element.displayName};';
-  }
+  String _mockGetterInvocation(PropertyAccessorElement element) => '_info.${element.displayName};';
 
-  String _mockSetterInvocation(PropertyAccessorElement element) {
-    return '_info.${element.displayName} = value;';
-  }
+  String _mockSetterInvocation(PropertyAccessorElement element) => '_info.${element.displayName} = value;';
 
   String _callbackForGetter(PropertyAccessorElement getter) =>
       '${getter.returnType} Function()? ${_callbackForGetterName(getter.name)};';
@@ -270,10 +268,10 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
   String _returnValueFieldForGetterName(String getterName) =>
       'get${getterName[0].toUpperCase()}${getterName.substring(1)}ReturnValue';
 
-  String _writeMockClassInfo(
+  void _writeMockClassInfo(
       ClassElement element, String interfaceName, StringBuffer buffer) {
     buffer.writeln(
-        'class ${interfaceName}Impl extends MockClassInfoImpl implements $interfaceName {\n');
+        'class ${interfaceName}Impl extends MockClassInfo implements $interfaceName {\n');
     for (final method in element.methods) {
       _writeMockMemberInfo(method.displayName, buffer);
     }
@@ -283,8 +281,12 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
       _writeMockMemberInfo(name, buffer);
     }
     buffer.writeln('}');
+  }
 
-    buffer.writeln('abstract class $interfaceName implements MockClassInfo {\n');
+  void _writeMockClassInfoInterface(
+      ClassElement element, String interfaceName, StringBuffer buffer) {
+    buffer
+        .writeln('abstract class $interfaceName {\n');
     for (final method in element.methods) {
       buffer.writeln('MockClassMemberInfo get ${method.displayName}Info;');
     }
@@ -294,8 +296,6 @@ class TestableGenerator extends GeneratorForAnnotation<TestableAnnotation> {
       buffer.writeln('MockClassMemberInfo get ${name}Info;');
     }
     buffer.writeln('}');
-
-    return buffer.toString();
   }
 
   void _writeMockMemberInfo(String name, StringBuffer buffer) {

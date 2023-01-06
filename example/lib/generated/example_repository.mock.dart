@@ -11,7 +11,8 @@ import 'dart:core';
 class MockIRepository implements IRepository {
   final dynamic _info = MockIRepositoryClassInfoImpl();
   MockIRepositoryClassInfo get info => _info as MockIRepositoryClassInfo;
-  Future<void> Function(String param, String param2)? onSaveData;
+  Future<void> Function(String param, String param2, String? param3)?
+      onSaveData;
   Future<void>? saveDataReturnValue;
   Future<List<String>> Function()? onLoadData;
   Future<List<String>>? loadDataReturnValue;
@@ -42,10 +43,11 @@ class MockIRepository implements IRepository {
   });
 
   @override
-  Future<void> saveData({required String param, required String param2}) {
-    _info.saveData(param: param, param2: param2);
+  Future<void> saveData(
+      {required String param, required String param2, String? param3}) {
+    _info.saveData(param: param, param2: param2, param3: param3);
     if (onSaveData != null) {
-      return onSaveData!.call(param, param2);
+      return onSaveData!.call(param, param2, param3);
     } else if (saveDataReturnValue != null) {
       return saveDataReturnValue!;
     } else {
@@ -140,7 +142,7 @@ class MockIRepository implements IRepository {
   }
 }
 
-class MockIRepositoryClassInfoImpl extends MockClassInfoImpl
+class MockIRepositoryClassInfoImpl extends MockClassInfo
     implements MockIRepositoryClassInfo {
   @override
   MockClassMemberInfo get saveDataInfo => getMemberInfo('saveData');
@@ -158,7 +160,7 @@ class MockIRepositoryClassInfoImpl extends MockClassInfoImpl
   MockClassMemberInfo get nameSetInfo => getMemberInfo('nameSet');
 }
 
-abstract class MockIRepositoryClassInfo implements MockClassInfo {
+abstract class MockIRepositoryClassInfo {
   MockClassMemberInfo get saveDataInfo;
   MockClassMemberInfo get loadDataInfo;
   MockClassMemberInfo get someActionInfo;
