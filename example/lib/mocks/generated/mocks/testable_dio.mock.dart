@@ -4,7 +4,7 @@
 // MockGenerator
 // **************************************************************************
 
-import 'package:example/testable_dio.dart';
+import 'package:example/mocks/testable_dio.dart';
 import 'package:dio/dio.dart';
 import 'package:mock/mock.dart';
 import 'dart:core';

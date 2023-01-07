@@ -1,7 +1,9 @@
 
 
 import 'package:example/example_class.dart';
-import 'mocks.dart';
+
+import 'mocks/mocks.dart';
+
 
 void main(List<String> args) async {
   final exampleClass =  MockExampleClass(method1ReturnValue: 'a');

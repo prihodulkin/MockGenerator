@@ -16,14 +16,14 @@ class MockLibraryFileBuilder implements Builder {
   @override
   Map<String, List<String>> get buildExtensions {
     return const {
-      r'$lib$': ['mocks.dart']
+      r'$lib$': ['mocks/mocks.dart']
     };
   }
 
   static AssetId _allFileOutput(BuildStep buildStep) {
     return AssetId(
       buildStep.inputId.package,
-      'lib/mocks.dart',
+      'lib/mocks/mocks.dart',
     );
   }
 
