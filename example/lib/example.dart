@@ -1,21 +1,10 @@
-import 'dart:math';
 
-import 'package:example/generated/example_repository.mock.dart';
+
+import 'package:example/example_class.dart';
+import 'mocks.dart';
 
 void main(List<String> args) async {
-  final exampleRepository = MockIRepository(
-    loadDataReturnValue: Future.value(['Aaa']),
-    onSomeAction: () {},
-    saveDataReturnValue: Future.value(),
-  );
-  exampleRepository.saveData(param: 'param1', param2: 'param2');
-  exampleRepository.info.saveDataInfo.called(2);
-  print(
-    exampleRepository.info.saveDataInfo.calledWith(
-      namedArguments: {
-        'param': 'param1',
-        'param2': 'param2',
-      },
-    ),
-  );
+  final exampleClass =  MockExampleClass(method1ReturnValue: 'a');
+  final exampleUser = ExampleUser(exampleClass: exampleClass);
+  assert(exampleUser.value()=='aB');
 }

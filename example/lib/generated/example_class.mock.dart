@@ -5,6 +5,7 @@
 // **************************************************************************
 
 import 'package:example/example_class.dart';
+import 'dart:math';
 import 'package:mock/mock.dart';
 import 'dart:core';
 
