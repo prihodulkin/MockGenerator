@@ -4,14 +4,13 @@
 // MockGenerator
 // **************************************************************************
 
-import 'package:example/example_class.dart';
-import 'dart:math';
+import 'package:example/example.dart';
 import 'package:mock/mock.dart';
 import 'dart:core';
 
-class MockExampleClass<T> implements ExampleClass {
-  final dynamic _info = MockExampleClassClassInfoImpl();
-  MockExampleClassClassInfo get info => _info as MockExampleClassClassInfo;
+class MockExample<T> implements Example {
+  final dynamic _info = MockExampleClassInfoImpl();
+  MockExampleClassInfo get info => _info as MockExampleClassInfo;
   T Function()? onMethod;
   T? methodReturnValue;
   String Function()? onMethod1;
@@ -21,7 +20,7 @@ class MockExampleClass<T> implements ExampleClass {
   String Function()? onSGet;
   void Function(String value)? onSSet;
 
-  MockExampleClass({
+  MockExample({
     this.onMethod,
     this.methodReturnValue,
     this.onMethod1,
@@ -89,8 +88,8 @@ class MockExampleClass<T> implements ExampleClass {
   }
 }
 
-class MockExampleClassClassInfoImpl extends MockClassInfo
-    implements MockExampleClassClassInfo {
+class MockExampleClassInfoImpl extends MockClassInfo
+    implements MockExampleClassInfo {
   @override
   MockClassMemberInfo get methodInfo => getMemberInfo('method');
 
@@ -107,7 +106,7 @@ class MockExampleClassClassInfoImpl extends MockClassInfo
   MockClassMemberInfo get sSetInfo => getMemberInfo('sSet');
 }
 
-abstract class MockExampleClassClassInfo {
+abstract class MockExampleClassInfo {
   MockClassMemberInfo get methodInfo;
   MockClassMemberInfo get method1Info;
   MockClassMemberInfo get method2Info;

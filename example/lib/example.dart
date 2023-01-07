@@ -1,12 +1,22 @@
+import 'package:mock/mock.dart';
 
+@mock
+abstract class Example<T> {
+  String s;
+  Example({required this.s});
 
-import 'package:example/example_class.dart';
+  T method();
 
-import 'mocks/mocks.dart';
+  String method1() => 's';
 
+  S method2<S>();
+}
 
-void main(List<String> args) async {
-  final exampleClass =  MockExampleClass(method1ReturnValue: 'a');
-  final exampleUser = ExampleUser(exampleClass: exampleClass);
-  assert(exampleUser.value()=='aB');
+class ExampleUser {
+  final Example exampleClass;
+  const ExampleUser({
+    required this.exampleClass,
+  });
+
+  String value() => '${exampleClass.method1()}B';
 }

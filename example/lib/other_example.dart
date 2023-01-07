@@ -1,6 +1,6 @@
 import 'package:mock/mock.dart';
 
 @Mock(name: 'GoodMockExample')
-class ExampleClass {
+class Example {
   String abc() => 'ABC';
 }

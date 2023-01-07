@@ -31,11 +31,10 @@ class MockLibraryFileBuilder implements Builder {
   Future<void> build(BuildStep buildStep) async {
     final importedFiles = <String>[];
 
-    await for (final input in buildStep.findAssets(Glob('lib/**'))) {
+    await for (final input
+        in buildStep.findAssets(Glob('lib/mocks/generated/**'))) {
       final library = await buildStep.resolver.libraryFor(input);
-      if (library.identifier.endsWith('.mock.dart')) {
-        importedFiles.add('export \'${library.identifier}\';');
-      }
+      importedFiles.add('export \'${library.identifier}\';');
     }
 
     await buildStep.writeAsString(

@@ -4,11 +4,11 @@
 // MockGenerator
 // **************************************************************************
 
-import 'package:example/example_class_1.dart';
+import 'package:example/other_example.dart';
 import 'package:mock/mock.dart';
 import 'dart:core';
 
-class GoodMockExample implements ExampleClass {
+class GoodMockExample implements Example {
   final dynamic _info = GoodMockExampleClassInfoImpl();
   GoodMockExampleClassInfo get info => _info as GoodMockExampleClassInfo;
   String Function()? onAbc;
