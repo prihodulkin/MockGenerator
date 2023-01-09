@@ -3,4 +3,10 @@ class Mock {
   const Mock({this.name});
 }
 
+class Mocks {
+  const Mocks();
+}
+
+const mocks = Mocks();
+
 const mock = Mock();

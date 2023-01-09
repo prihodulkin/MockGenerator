@@ -4,8 +4,8 @@
 // MockGenerator
 // **************************************************************************
 
-import 'package:example/example_repository.dart';
 import 'package:mock/mock.dart';
+import 'package:example/example_repository.dart';
 import 'dart:core';
 
 class MockIRepository implements IRepository {

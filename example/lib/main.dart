@@ -1,12 +1,21 @@
 import 'package:dio/dio.dart';
 import 'package:example/example.dart';
-import 'mocks/mocks.dart';
+import 'package:mock/mock.dart';
+
+import 'mocks/generated/mocks.dart';
+
+
+@mocks
+const externalMocks = [
+  Dio,
+];
+
 
 void main(List<String> args) async {
   final exampleClass = MockExample(method1ReturnValue: 'a');
   final exampleUser = ExampleUser(exampleClass: exampleClass);
   assert(exampleUser.value() == 'aB');
-  final dio = MockTestableDio(
+  final dio = MockDio(
     onGet: <T>(path, queryParameters, options, cancelToken,
             onReceiveProgress) async =>
         Response<T>(
