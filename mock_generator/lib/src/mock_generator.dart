@@ -6,30 +6,36 @@ import 'package:mock/mock.dart';
 import 'package:source_gen/source_gen.dart';
 
 class MockGenerator extends Generator {
-  TypeChecker get typeChecker => TypeChecker.fromRuntime(Mock);
+  TypeChecker get mockChecker => TypeChecker.fromRuntime(Mock);
+  TypeChecker get externalMocksChecker =>
+      TypeChecker.fromRuntime(ExternalMocks);
 
   @override
   FutureOr<String> generate(LibraryReader library, BuildStep buildStep) async {
     final values = <String>{};
     final imports = <String>{};
-    final annotatedElements = library.annotatedWith(typeChecker);
-
-    for (var annotatedElement in annotatedElements) {
+    final mockElements = library.annotatedWith(mockChecker);
+    for (final annotatedElement in mockElements) {
       if (annotatedElement.element is ClassElement) {
         imports.add(
             'import \'${(annotatedElement.element as ClassElement).source.uri}\';');
+
+        for (final lib in (annotatedElement.element as ClassElement)
+            .library
+            .importedLibraries) {
+          imports.add('import \'${lib.source.uri}\';');
+        }
+        final generatedValue = _generateForAnnotatedElement(
+          annotatedElement.element,
+          annotatedElement.annotation,
+          buildStep,
+        );
+        values.add(generatedValue);
       }
-      for (final lib in (annotatedElement.element as ClassElement)
-          .library
-          .importedLibraries) {
-        imports.add('import \'${lib.source.uri}\';');
-      }
-      final generatedValue = _generateForAnnotatedElement(
-        annotatedElement.element,
-        annotatedElement.annotation,
-        buildStep,
-      );
-      values.add(generatedValue);
+    }
+    final externalMocksElements = library.annotatedWith(externalMocksChecker);
+    for (final annotatedElement in externalMocksElements) {
+      print('a');
     }
 
     return imports.join('\n') + values.join('\n\n');

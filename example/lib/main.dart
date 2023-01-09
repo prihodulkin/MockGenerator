@@ -1,6 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:example/example.dart';
+import 'package:mock/mock.dart';
 import 'mocks/mocks.dart';
+
+@externalMocks
+final mocks = [
+  Dio,
+];
 
 void main(List<String> args) async {
   final exampleClass = MockExample(method1ReturnValue: 'a');
