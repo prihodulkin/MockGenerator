@@ -51,7 +51,8 @@ class MockClassMemberInfo {
   void invoke(InvocationInfo invocationInfo) =>
       _invocations.add(invocationInfo);
 
-  int calledWith({
+  bool calledWith(
+    int count, {
     List<dynamic>? positionalArguments,
     List<Type>? typeArguments,
     Map<String, dynamic>? namedArguments,
@@ -66,8 +67,9 @@ class MockClassMemberInfo {
     );
     predicate = predicate ?? (a, b) => a == b;
     return invocations
-        .where((element) => predicate!(element, invocationInfo))
-        .length;
+            .where((element) => predicate!(element, invocationInfo))
+            .length ==
+        count;
   }
 
   bool get isNeverCalled => invocations.isEmpty;

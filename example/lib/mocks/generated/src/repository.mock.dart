@@ -5,7 +5,7 @@
 // **************************************************************************
 
 import 'package:mock/mock.dart';
-import 'package:example/example_repository.dart';
+import 'package:example/repository.dart';
 import 'dart:core';
 
 class MockIRepository implements IRepository {
@@ -14,7 +14,7 @@ class MockIRepository implements IRepository {
   Future<void> Function(String param, String param2, String? param3)?
       onSaveData;
   Future<void>? saveDataReturnValue;
-  Future<List<String>> Function()? onLoadData;
+  Future<List<String>> Function(String param)? onLoadData;
   Future<List<String>>? loadDataReturnValue;
   void Function()? onSomeAction;
   void Function()? onB;
@@ -56,10 +56,10 @@ class MockIRepository implements IRepository {
   }
 
   @override
-  Future<List<String>> loadData() {
-    _info.loadData();
+  Future<List<String>> loadData(String param) {
+    _info.loadData(param);
     if (onLoadData != null) {
-      return onLoadData!.call();
+      return onLoadData!.call(param);
     } else if (loadDataReturnValue != null) {
       return loadDataReturnValue!;
     } else {

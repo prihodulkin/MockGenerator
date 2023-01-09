@@ -8,7 +8,7 @@ abstract class IRepository with MixinA implements B {
     String? param3,
   });
 
-  Future<List<String>> loadData();
+  Future<List<String>> loadData(String param);
 
   String get name;
 
