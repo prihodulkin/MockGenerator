@@ -4,14 +4,22 @@
 // MockGenerator
 // **************************************************************************
 
-import 'package:example/mocks/third_part_classes/testable_dio.dart';
-import 'package:dio/dio.dart';
 import 'package:mock/mock.dart';
+import 'package:dio/src/dio.dart';
+import 'dart:async';
+import 'package:dio/src/adapter.dart';
+import 'package:dio/src/dio_mixin.dart';
+import 'package:dio/src/options.dart';
+import 'package:dio/src/headers.dart';
+import 'package:dio/src/cancel_token.dart';
+import 'package:dio/src/transformer.dart';
+import 'package:dio/src/response.dart';
+import 'package:dio/src/entry_stub.dart';
 import 'dart:core';
 
-class MockTestableDio implements TestableDio {
-  final dynamic _info = MockTestableDioClassInfoImpl();
-  MockTestableDioClassInfo get info => _info as MockTestableDioClassInfo;
+class MockDio implements Dio {
+  final dynamic _info = MockDioClassInfoImpl();
+  MockDioClassInfo get info => _info as MockDioClassInfo;
   void Function(bool force)? onClose;
   Future<Response<T>> Function<T>(
       String path,
@@ -139,7 +147,7 @@ class MockTestableDio implements TestableDio {
   Interceptors? getInterceptorsReturnValue;
   Interceptors Function()? onInterceptorsGet;
 
-  MockTestableDio({
+  MockDio({
     this.onClose,
     this.onGet,
     this.onGetUri,
@@ -636,7 +644,122 @@ class MockTestableDio implements TestableDio {
   }
 }
 
-class MockTestableDioClassInfoImpl extends MockClassInfo
-    implements MockTestableDioClassInfo {}
+class MockDioClassInfoImpl extends MockClassInfo implements MockDioClassInfo {
+  @override
+  MockClassMemberInfo get closeInfo => getMemberInfo('close');
 
-abstract class MockTestableDioClassInfo {}
+  @override
+  MockClassMemberInfo get getInfo => getMemberInfo('get');
+
+  @override
+  MockClassMemberInfo get getUriInfo => getMemberInfo('getUri');
+
+  @override
+  MockClassMemberInfo get postInfo => getMemberInfo('post');
+
+  @override
+  MockClassMemberInfo get postUriInfo => getMemberInfo('postUri');
+
+  @override
+  MockClassMemberInfo get putInfo => getMemberInfo('put');
+
+  @override
+  MockClassMemberInfo get putUriInfo => getMemberInfo('putUri');
+
+  @override
+  MockClassMemberInfo get headInfo => getMemberInfo('head');
+
+  @override
+  MockClassMemberInfo get headUriInfo => getMemberInfo('headUri');
+
+  @override
+  MockClassMemberInfo get deleteInfo => getMemberInfo('delete');
+
+  @override
+  MockClassMemberInfo get deleteUriInfo => getMemberInfo('deleteUri');
+
+  @override
+  MockClassMemberInfo get patchInfo => getMemberInfo('patch');
+
+  @override
+  MockClassMemberInfo get patchUriInfo => getMemberInfo('patchUri');
+
+  @override
+  MockClassMemberInfo get lockInfo => getMemberInfo('lock');
+
+  @override
+  MockClassMemberInfo get unlockInfo => getMemberInfo('unlock');
+
+  @override
+  MockClassMemberInfo get clearInfo => getMemberInfo('clear');
+
+  @override
+  MockClassMemberInfo get downloadInfo => getMemberInfo('download');
+
+  @override
+  MockClassMemberInfo get downloadUriInfo => getMemberInfo('downloadUri');
+
+  @override
+  MockClassMemberInfo get requestInfo => getMemberInfo('request');
+
+  @override
+  MockClassMemberInfo get requestUriInfo => getMemberInfo('requestUri');
+
+  @override
+  MockClassMemberInfo get fetchInfo => getMemberInfo('fetch');
+
+  @override
+  MockClassMemberInfo get optionsGetInfo => getMemberInfo('optionsGet');
+
+  @override
+  MockClassMemberInfo get optionsSetInfo => getMemberInfo('optionsSet');
+
+  @override
+  MockClassMemberInfo get httpClientAdapterGetInfo =>
+      getMemberInfo('httpClientAdapterGet');
+
+  @override
+  MockClassMemberInfo get httpClientAdapterSetInfo =>
+      getMemberInfo('httpClientAdapterSet');
+
+  @override
+  MockClassMemberInfo get transformerGetInfo => getMemberInfo('transformerGet');
+
+  @override
+  MockClassMemberInfo get transformerSetInfo => getMemberInfo('transformerSet');
+
+  @override
+  MockClassMemberInfo get interceptorsGetInfo =>
+      getMemberInfo('interceptorsGet');
+}
+
+abstract class MockDioClassInfo {
+  MockClassMemberInfo get closeInfo;
+  MockClassMemberInfo get getInfo;
+  MockClassMemberInfo get getUriInfo;
+  MockClassMemberInfo get postInfo;
+  MockClassMemberInfo get postUriInfo;
+  MockClassMemberInfo get putInfo;
+  MockClassMemberInfo get putUriInfo;
+  MockClassMemberInfo get headInfo;
+  MockClassMemberInfo get headUriInfo;
+  MockClassMemberInfo get deleteInfo;
+  MockClassMemberInfo get deleteUriInfo;
+  MockClassMemberInfo get patchInfo;
+  MockClassMemberInfo get patchUriInfo;
+  MockClassMemberInfo get lockInfo;
+  MockClassMemberInfo get unlockInfo;
+  MockClassMemberInfo get clearInfo;
+  MockClassMemberInfo get downloadInfo;
+  MockClassMemberInfo get downloadUriInfo;
+  MockClassMemberInfo get requestInfo;
+  MockClassMemberInfo get requestUriInfo;
+  MockClassMemberInfo get fetchInfo;
+  MockClassMemberInfo get optionsGetInfo;
+  MockClassMemberInfo get optionsSetInfo;
+  MockClassMemberInfo get httpClientAdapterGetInfo;
+  MockClassMemberInfo get httpClientAdapterSetInfo;
+  MockClassMemberInfo get transformerGetInfo;
+  MockClassMemberInfo get transformerSetInfo;
+  MockClassMemberInfo get interceptorsGetInfo;
+}

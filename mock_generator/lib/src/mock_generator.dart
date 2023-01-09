@@ -7,44 +7,64 @@ import 'package:source_gen/source_gen.dart';
 
 class MockGenerator extends Generator {
   TypeChecker get mockChecker => TypeChecker.fromRuntime(Mock);
-  TypeChecker get externalMocksChecker =>
-      TypeChecker.fromRuntime(ExternalMocks);
+  TypeChecker get mocksChecker => TypeChecker.fromRuntime(Mocks);
 
   @override
   FutureOr<String> generate(LibraryReader library, BuildStep buildStep) async {
-    final values = <String>{};
-    final imports = <String>{};
+    final classes = <String>{};
+    final imports = <String>{'import \'package:mock/mock.dart\';'};
     final mockElements = library.annotatedWith(mockChecker);
     for (final annotatedElement in mockElements) {
-      if (annotatedElement.element is ClassElement) {
-        imports.add(
-            'import \'${(annotatedElement.element as ClassElement).source.uri}\';');
-
-        for (final lib in (annotatedElement.element as ClassElement)
-            .library
-            .importedLibraries) {
-          imports.add('import \'${lib.source.uri}\';');
-        }
-        final generatedValue = _generateForAnnotatedElement(
-          annotatedElement.element,
-          annotatedElement.annotation,
-          buildStep,
-        );
-        values.add(generatedValue);
+      _addImportsAndClasses(annotatedElement, imports, classes);
+    }
+    final mocksElements = library.annotatedWith(mocksChecker);
+    for (final annotatedElement in mocksElements) {
+      final element = annotatedElement.element;
+      if (element is TopLevelVariableElement) {
+        final value = element.computeConstantValue();
+        final dartObjects = value?.toListValue() ?? [];
+        dartObjects
+            .map((e) => e.toTypeValue())
+            .where((element) => element != null)
+            .map((e) => e!.element2!)
+            .forEach(
+              (element) => _addImportsAndClasses(
+                AnnotatedElement(annotatedElement.annotation, element),
+                imports,
+                classes,
+              ),
+            );
       }
     }
-    final externalMocksElements = library.annotatedWith(externalMocksChecker);
-    for (final annotatedElement in externalMocksElements) {
-      print('a');
-    }
 
-    return imports.join('\n') + values.join('\n\n');
+    return imports.join('\n') + classes.join('\n\n');
+  }
+
+  void _addImportsAndClasses(
+    AnnotatedElement annotatedElement,
+    Set<String> imports,
+    Set<String> classes,
+  ) {
+    if (annotatedElement.element is ClassElement) {
+      imports.add(
+          'import \'${(annotatedElement.element as ClassElement).source.uri}\';');
+
+      for (final lib in (annotatedElement.element as ClassElement)
+          .library
+          .importedLibraries) {
+        imports.add('import \'${lib.source.uri}\';');
+      }
+      final generatedValue = _generateForAnnotatedElement(
+        annotatedElement.element,
+        annotatedElement.annotation,
+      );
+      classes.add(generatedValue);
+    }
   }
 
   String _generateForAnnotatedElement(
     Element element,
     ConstantReader annotation,
-    BuildStep buildStep,
   ) {
     if (element is! ClassElement) return '';
     final className = element.name;

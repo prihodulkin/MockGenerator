@@ -3,10 +3,10 @@ class Mock {
   const Mock({this.name});
 }
 
-class ExternalMocks {
-  const ExternalMocks();
+class Mocks {
+  const Mocks();
 }
 
-const externalMocks = ExternalMocks();
+const mocks = Mocks();
 
 const mock = Mock();

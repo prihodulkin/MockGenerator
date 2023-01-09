@@ -4,8 +4,8 @@
 // MockGenerator
 // **************************************************************************
 
-import 'package:example/example.dart';
 import 'package:mock/mock.dart';
+import 'package:example/example.dart';
 import 'dart:core';
 
 class MockExample<T> implements Example {
