@@ -16,14 +16,14 @@ class MockLibraryFileBuilder implements Builder {
   @override
   Map<String, List<String>> get buildExtensions {
     return const {
-      r'$lib$': ['mocks/mocks.dart']
+      r'$lib$': ['mocks/generated/mocks.dart']
     };
   }
 
   static AssetId _allFileOutput(BuildStep buildStep) {
     return AssetId(
       buildStep.inputId.package,
-      'lib/mocks/mocks.dart',
+      'lib/mocks/generated/mocks.dart',
     );
   }
 
@@ -31,10 +31,11 @@ class MockLibraryFileBuilder implements Builder {
   Future<void> build(BuildStep buildStep) async {
     final importedFiles = <String>[];
 
-    await for (final input
-        in buildStep.findAssets(Glob('lib/mocks/generated/**'))) {
+    await for (final input in buildStep.findAssets(Glob('lib/mocks/generated/**'))) {
       final library = await buildStep.resolver.libraryFor(input);
-      importedFiles.add('export \'${library.identifier}\';');
+
+        importedFiles.add('export \'${library.identifier}\';');
+      
     }
 
     await buildStep.writeAsString(

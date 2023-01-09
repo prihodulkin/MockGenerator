@@ -8,12 +8,12 @@ builders:
     defaults:
       options:
         build_extensions:
-          '^lib/{{}}.dart': 'lib/mocks/generated/{{}}.mock.dart'
+          '^lib/{{}}.dart': 'lib/mocks/generated/src/{{}}.mock.dart'
 
   mock_library_builder:
     import: "package:mock_generator/mock_generator.dart"
     builder_factories: ["generateMocksLibrary"]
-    build_extensions: {'$lib$': ['mocks/mocks.dart']}
+    build_extensions: {'$lib$': ['mocks/generated/mocks.dart']}
     auto_apply: dependents
     build_to: source
 

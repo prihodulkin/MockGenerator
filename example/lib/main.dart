@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:example/example.dart';
 import 'package:mock/mock.dart';
-import 'mocks/mocks.dart';
+
+import 'mocks/generated/mocks.dart';
+
 
 @mocks
 const externalMocks = [
