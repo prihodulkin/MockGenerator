@@ -31,7 +31,7 @@ class MockLibraryFileBuilder implements Builder {
   Future<void> build(BuildStep buildStep) async {
     final importedFiles = <String>[];
 
-    await for (final input in buildStep.findAssets(Glob('lib/mocks/generated/**'))) {
+    await for (final input in buildStep.findAssets(Glob('lib/mocks/generated/src/**'))) {
       final library = await buildStep.resolver.libraryFor(input);
 
         importedFiles.add('export \'${library.identifier}\';');
