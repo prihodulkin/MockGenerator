@@ -21,80 +21,54 @@ class MockDio implements Dio {
   final dynamic _info = MockDioClassInfoImpl();
   MockDioClassInfo get info => _info as MockDioClassInfo;
   void Function(bool force)? onClose;
-  Future<Response<T>> Function<T>(
-      String path,
-      Map<String, dynamic>? queryParameters,
-      Options? options,
-      CancelToken? cancelToken,
-      void Function(int, int)? onReceiveProgress)? onGet;
-  Future<Response<T>> Function<T>(
-      Uri uri,
-      Options? options,
-      CancelToken? cancelToken,
-      void Function(int, int)? onReceiveProgress)? onGetUri;
-  Future<Response<T>> Function<T>(
-      String path,
-      dynamic data,
-      Map<String, dynamic>? queryParameters,
-      Options? options,
-      CancelToken? cancelToken,
-      void Function(int, int)? onSendProgress,
-      void Function(int, int)? onReceiveProgress)? onPost;
-  Future<Response<T>> Function<T>(
-      Uri uri,
-      dynamic data,
-      Options? options,
-      CancelToken? cancelToken,
-      void Function(int, int)? onSendProgress,
-      void Function(int, int)? onReceiveProgress)? onPostUri;
-  Future<Response<T>> Function<T>(
-      String path,
-      dynamic data,
-      Map<String, dynamic>? queryParameters,
-      Options? options,
-      CancelToken? cancelToken,
-      void Function(int, int)? onSendProgress,
-      void Function(int, int)? onReceiveProgress)? onPut;
-  Future<Response<T>> Function<T>(
-      Uri uri,
-      dynamic data,
-      Options? options,
-      CancelToken? cancelToken,
-      void Function(int, int)? onSendProgress,
-      void Function(int, int)? onReceiveProgress)? onPutUri;
-  Future<Response<T>> Function<T>(
-      String path,
-      dynamic data,
-      Map<String, dynamic>? queryParameters,
-      Options? options,
-      CancelToken? cancelToken)? onHead;
-  Future<Response<T>> Function<T>(
-          Uri uri, dynamic data, Options? options, CancelToken? cancelToken)?
-      onHeadUri;
-  Future<Response<T>> Function<T>(
-      String path,
-      dynamic data,
-      Map<String, dynamic>? queryParameters,
-      Options? options,
-      CancelToken? cancelToken)? onDelete;
-  Future<Response<T>> Function<T>(
-          Uri uri, dynamic data, Options? options, CancelToken? cancelToken)?
-      onDeleteUri;
-  Future<Response<T>> Function<T>(
-      String path,
-      dynamic data,
-      Map<String, dynamic>? queryParameters,
-      Options? options,
-      CancelToken? cancelToken,
-      void Function(int, int)? onSendProgress,
-      void Function(int, int)? onReceiveProgress)? onPatch;
-  Future<Response<T>> Function<T>(
-      Uri uri,
-      dynamic data,
-      Options? options,
-      CancelToken? cancelToken,
-      void Function(int, int)? onSendProgress,
-      void Function(int, int)? onReceiveProgress)? onPatchUri;
+  GenericMemberHandlersStorage onGetHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage getReturnValueHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage onGetUriHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage getUriReturnValueHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage onPostHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage postReturnValueHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage onPostUriHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage postUriReturnValueHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage onPutHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage putReturnValueHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage onPutUriHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage putUriReturnValueHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage onHeadHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage headReturnValueHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage onHeadUriHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage headUriReturnValueHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage onDeleteHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage deleteReturnValueHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage onDeleteUriHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage deleteUriReturnValueHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage onPatchHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage patchReturnValueHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage onPatchUriHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage patchUriReturnValueHandlersStorage =
+      GenericMemberHandlersStorage();
   void Function()? onLock;
   void Function()? onUnlock;
   void Function()? onClear;
@@ -119,22 +93,18 @@ class MockDio implements Dio {
       dynamic data,
       Options? options)? onDownloadUri;
   Future<Response<dynamic>>? downloadUriReturnValue;
-  Future<Response<T>> Function<T>(
-      String path,
-      dynamic data,
-      Map<String, dynamic>? queryParameters,
-      CancelToken? cancelToken,
-      Options? options,
-      void Function(int, int)? onSendProgress,
-      void Function(int, int)? onReceiveProgress)? onRequest;
-  Future<Response<T>> Function<T>(
-      Uri uri,
-      dynamic data,
-      CancelToken? cancelToken,
-      Options? options,
-      void Function(int, int)? onSendProgress,
-      void Function(int, int)? onReceiveProgress)? onRequestUri;
-  Future<Response<T>> Function<T>(RequestOptions requestOptions)? onFetch;
+  GenericMemberHandlersStorage onRequestHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage requestReturnValueHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage onRequestUriHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage requestUriReturnValueHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage onFetchHandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage fetchReturnValueHandlersStorage =
+      GenericMemberHandlersStorage();
   BaseOptions? getOptionsReturnValue;
   BaseOptions Function()? onOptionsGet;
   void Function(BaseOptions value)? onOptionsSet;
@@ -149,18 +119,6 @@ class MockDio implements Dio {
 
   MockDio({
     this.onClose,
-    this.onGet,
-    this.onGetUri,
-    this.onPost,
-    this.onPostUri,
-    this.onPut,
-    this.onPutUri,
-    this.onHead,
-    this.onHeadUri,
-    this.onDelete,
-    this.onDeleteUri,
-    this.onPatch,
-    this.onPatchUri,
     this.onLock,
     this.onUnlock,
     this.onClear,
@@ -168,9 +126,6 @@ class MockDio implements Dio {
     this.downloadReturnValue,
     this.onDownloadUri,
     this.downloadUriReturnValue,
-    this.onRequest,
-    this.onRequestUri,
-    this.onFetch,
     this.onOptionsGet,
     this.getOptionsReturnValue,
     this.onOptionsSet,

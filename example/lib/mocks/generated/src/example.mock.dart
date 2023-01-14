@@ -15,7 +15,10 @@ class MockExample<T> implements Example {
   T? methodReturnValue;
   String Function()? onMethod1;
   String? method1ReturnValue;
-  S Function<S>()? onMethod2;
+  GenericMemberHandlersStorage onMethod2HandlersStorage =
+      GenericMemberHandlersStorage();
+  GenericMemberHandlersStorage method2ReturnValueHandlersStorage =
+      GenericMemberHandlersStorage();
   String? getSReturnValue;
   String Function()? onSGet;
   void Function(String value)? onSSet;
@@ -25,7 +28,6 @@ class MockExample<T> implements Example {
     this.methodReturnValue,
     this.onMethod1,
     this.method1ReturnValue,
-    this.onMethod2,
     this.onSGet,
     this.getSReturnValue,
     this.onSSet,

@@ -111,9 +111,14 @@ class MockGenerator extends Generator {
     StringBuffer buffer,
   ) {
     for (final method in methods) {
-      buffer.writeln(_callbackForMethod(method));
-      if (!method.returnType.isVoid && method.typeParameters.isEmpty) {
-        buffer.writeln(_returnValueFieldForMethod(method));
+      final isGeneric = method.typeParameters.isEmpty;
+      buffer.writeln(isGeneric
+          ? _callbackForMethod(method)
+          : _genericMethodCallbackHandlersStorage(method));
+      if (!method.returnType.isVoid) {
+        buffer.writeln(isGeneric
+            ? _returnValueFieldForMethod(method)
+            : _genericMethodReturnValueHandlersStorage(method));
       }
     }
     for (final accessor in accessors) {
@@ -136,11 +141,12 @@ class MockGenerator extends Generator {
   ) {
     buffer.writeln('$className({ ');
     for (final method in methods) {
+      if (method.typeParameters.isNotEmpty) continue;
       _writeParameterAssignment(
         _callbackForMethodName(method.name),
         buffer,
       );
-      if (!method.returnType.isVoid && method.typeParameters.isEmpty) {
+      if (!method.returnType.isVoid) {
         _writeParameterAssignment(
           _returnValueFieldForMethodName(method.name),
           buffer,
@@ -311,9 +317,14 @@ class MockGenerator extends Generator {
   String _callbackForSetterName(String setterName) =>
       'on${setterName[0].toUpperCase()}${setterName.substring(1)}Set';
 
-  String _returnValueFieldForMethod(MethodElement method) {
-    return '${method.returnType}? ${_returnValueFieldForMethodName(method.name)};';
-  }
+  String _returnValueFieldForMethod(MethodElement method) =>
+      '${method.returnType}? ${_returnValueFieldForMethodName(method.name)};';
+
+  String _genericMethodReturnValueHandlersStorage(MethodElement method) =>
+      'GenericMemberHandlersStorage ${_returnValueFieldForMethodName(method.name)}HandlersStorage = GenericMemberHandlersStorage();';
+
+  String _genericMethodCallbackHandlersStorage(MethodElement method) =>
+      'GenericMemberHandlersStorage ${_callbackForMethodName(method.name)}HandlersStorage = GenericMemberHandlersStorage();';
 
   String _returnValueFieldForGetter(PropertyAccessorElement getter) =>
       '${getter.returnType}? ${_returnValueFieldForGetterName(getter.name)};';
